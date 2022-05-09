@@ -1,11 +1,11 @@
 import { Navigate, useRoutes } from 'react-router-dom';
-import DashboardLayout from './layouts/dashboard';
-import LogoOnlyLayout from './layouts/LogoOnlyLayout';
-import Workshops from './pages/Blog';
-import DashboardOverview from './pages/DashboardApp';
-import Login from './pages/Login';
-import NotFound from './pages/Page404';
-import Users from './pages/Users';
+import DashboardLayout from './components/dashboard';
+import LogoOnlyLayout from './components/shared/LogoOnlyLayout';
+import Workshops from './components/workshops/Workshops';
+import DashboardOverview from './components/dashboard/DashboardApp';
+import Login from './components/login/Login';
+import NotFound from './components/fallback/Page404';
+import Users from './components/users/Users';
 
 export default function Router() {
   return useRoutes([
