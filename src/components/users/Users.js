@@ -68,7 +68,6 @@ export default function Users() {
     const fetchData = async () => {
       const users = await getCollection("users");
       setUsers(users);
-      console.log(users);
     }
 
     fetchData();

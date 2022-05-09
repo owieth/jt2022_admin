@@ -25,14 +25,14 @@ const ChartWrapperStyle = styled('div')(({ theme }) => ({
   },
 }));
 
-AppCurrentVisits.propTypes = {
+RegionsChart.propTypes = {
   title: PropTypes.string,
   subheader: PropTypes.string,
   chartColors: PropTypes.arrayOf(PropTypes.string),
   chartData: PropTypes.array,
 };
 
-export default function AppCurrentVisits({ title, subheader, chartColors, chartData, ...other }) {
+export default function RegionsChart({ title, subheader, chartColors, chartData, ...other }) {
   const theme = useTheme();
 
   const chartLabels = chartData.map((i) => i.label);

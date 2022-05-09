@@ -31,14 +31,14 @@ const CoverImgStyle = styled('img')({
   position: 'absolute',
 });
 
-export default function BlogPostCard({ workshop }) {
-  const { attendees, name, description, date, startTime, endTime } = workshop;
+export default function BlogPostCard({ index, workshop }) {
+  const { attendees, name, description, date, startTime, endTime, image } = workshop;
 
   return (
     <Grid item xs={12} sm={6} md={3}>
       <Card sx={{ position: 'relative' }}>
         <CardMediaStyle>
-          <CoverImgStyle src="/static/mock-images/covers/cover_1.jpg" />
+          <CoverImgStyle src={image} />
         </CardMediaStyle>
 
         <CardContent>
@@ -47,7 +47,8 @@ export default function BlogPostCard({ workshop }) {
           </Typography>
 
           <TitleStyle
-            to="#"
+            to={`${index}`}
+            state={workshop}
             color="inherit"
             variant="subtitle2"
             underline="hover"

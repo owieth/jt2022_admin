@@ -5,13 +5,13 @@ import { Box, Card, CardHeader } from '@mui/material';
 import { fNumber } from '../../utils/formatNumber';
 import { BaseOptionChart } from '.';
 
-AppConversionRates.propTypes = {
+AttendeesChart.propTypes = {
   title: PropTypes.string,
   subheader: PropTypes.string,
   chartData: PropTypes.array.isRequired,
 };
 
-export default function AppConversionRates({ title, subheader, chartData, ...other }) {
+export default function AttendeesChart({ title, subheader, chartData, ...other }) {
   const chartLabels = chartData.map((i) => i.label);
 
   const chartSeries = chartData.map((i) => i.value);

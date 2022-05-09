@@ -13,7 +13,6 @@ export default function Workshops() {
     const fetchData = async () => {
       const workshops = await getCollection("workshops");
       setWorkshops(workshops);
-      console.log(workshops);
     }
 
     fetchData();

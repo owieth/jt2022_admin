@@ -5,21 +5,22 @@ import { getCollection } from '../../service/firebase';
 import React, { useEffect, useState } from 'react';
 import Page from '../shared/Page';
 import {
-  AppConversionRates, AppCurrentVisits, AppOrderTimeline, AppWebsiteVisits
+  AttendeesChart, RegionsChart, AppOrderTimeline, AppWebsiteVisits
 } from '../chart';
 import { DashboardWidget } from '.'
+import { fDate } from '../../utils/formatTime'
 
 export default function DashboardOverview() {
   const theme = useTheme();
-  const [userCount, setUserCount] = useState(0);
-  const [workshopCount, setWorkshopCount] = useState(0);
+  const [users, setUsers] = useState([]);
+  const [workshops, setWorkshops] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
       const users = await getCollection("users");
-      setUserCount(users.length);
+      setUsers(users);
       const workshops = await getCollection("workshops");
-      setWorkshopCount(workshops.length);
+      setWorkshops(workshops);
     }
 
     fetchData();
@@ -34,11 +35,11 @@ export default function DashboardOverview() {
 
         <Grid container spacing={3}>
           <Grid item xs={12} sm={6} md={3}>
-            <DashboardWidget title="Anzahl Workshops" total={workshopCount} icon={'ant-design:android-filled'} />
+            <DashboardWidget title="Anzahl Workshops" total={workshops.length} icon={'ant-design:android-filled'} />
           </Grid>
 
           <Grid item xs={12} sm={6} md={3}>
-            <DashboardWidget title="Anzahl Teilnehmer" total={userCount} color="info" icon={'ant-design:apple-filled'} />
+            <DashboardWidget title="Anzahl Teilnehmer" total={users.length} color="info" icon={'ant-design:apple-filled'} />
           </Grid>
 
           <Grid item xs={12} sm={6} md={3}>
@@ -90,14 +91,14 @@ export default function DashboardOverview() {
           </Grid>
 
           <Grid item xs={12} md={6} lg={4}>
-            <AppCurrentVisits
+            <RegionsChart
               title="Aufteilung Bezirke"
-              chartData={[
-                { label: 'America', value: 4344 },
-                { label: 'Asia', value: 5435 },
-                { label: 'Europe', value: 1443 },
-                { label: 'Africa', value: 4443 },
-              ]}
+              chartData={users.map((user) => {
+                return {
+                  label: user.region,
+                  value: new Set(users.filter((u) => u.region === user.region)).size
+                }
+              })}
               chartColors={[
                 theme.palette.primary.main,
                 theme.palette.chart.blue[0],
@@ -108,21 +109,15 @@ export default function DashboardOverview() {
           </Grid>
 
           <Grid item xs={12} md={6} lg={8}>
-            <AppConversionRates
-              title="Conversion Rates"
-              subheader="(+43%) than last year"
-              chartData={[
-                { label: 'Italy', value: 400 },
-                { label: 'Japan', value: 430 },
-                { label: 'China', value: 448 },
-                { label: 'Canada', value: 470 },
-                { label: 'France', value: 540 },
-                { label: 'Germany', value: 580 },
-                { label: 'South Korea', value: 690 },
-                { label: 'Netherlands', value: 1100 },
-                { label: 'United States', value: 1200 },
-                { label: 'United Kingdom', value: 1380 },
-              ]}
+            <AttendeesChart
+              title="Anzahl Teilnehmer pro Workshop"
+              subheader={`${fDate(new Date())}`}
+              chartData={workshops.map((workshop) => {
+                return {
+                  label: workshop.name,
+                  value: workshop.attendees.length
+                }
+              })}
             />
           </Grid>
 

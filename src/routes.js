@@ -6,6 +6,7 @@ import DashboardOverview from './components/dashboard/DashboardApp';
 import Login from './components/login/Login';
 import NotFound from './components/fallback/Page404';
 import Users from './components/users/Users';
+import Workshop from './components/workshops/Workshop';
 
 export default function Router() {
   return useRoutes([
@@ -15,6 +16,7 @@ export default function Router() {
       children: [
         { path: 'overview', element: <DashboardOverview /> },
         { path: 'users', element: <Users /> },
+        { path: 'workshops/:id', element: <Workshop /> },
         { path: 'workshops', element: <Workshops /> },
       ],
     },
