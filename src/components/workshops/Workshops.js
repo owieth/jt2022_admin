@@ -10,12 +10,12 @@ export default function Workshops() {
   const [workshops, setWorkshops] = useState([]);
 
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchWorkshops = async () => {
       const workshops = await getCollection("workshops");
       setWorkshops(workshops);
     }
 
-    fetchData();
+    fetchWorkshops();
   }, [])
 
   return (

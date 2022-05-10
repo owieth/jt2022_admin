@@ -46,7 +46,7 @@ export default function DashboardNavbar({ onOpenSidebar }) {
 
         <Box sx={{ flexGrow: 1 }} />
 
-        <Avatar />
+        <Avatar src='https://firebasestorage.googleapis.com/v0/b/jt2022-97562.appspot.com/o/users%2Fadmin.jpeg?alt=media&token=a15fd4db-df11-44c8-bdbe-5b0372d09c35' />
       </ToolbarStyle>
     </RootStyle>
   );

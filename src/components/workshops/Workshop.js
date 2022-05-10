@@ -1,4 +1,4 @@
-import { Box, Button, Card, Container, Grid, Stack, TextField, Input } from '@mui/material';
+import { Box, Button, Card, Container, Grid, Stack, TextField } from '@mui/material';
 import IconButton from '@mui/material/IconButton';
 import ImageListItem from '@mui/material/ImageListItem';
 import ImageListItemBar from '@mui/material/ImageListItemBar';
@@ -7,15 +7,21 @@ import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { useFormik } from 'formik';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
+import { updateWorkshop } from 'src/service/firebase';
 import Iconify from '../shared/Iconify';
 import Page from '../shared/Page';
 
 export default function Workshop() {
+  const [image, setImage] = useState('');
 
   const location = useLocation();
   const workshop = location.state;
+
+  useEffect(() => {
+    setImage(workshop.image);
+  }, [workshop])
 
   const formik = useFormik({
     initialValues: {
@@ -25,10 +31,17 @@ export default function Workshop() {
       startTime: new Date(),
       endTime: new Date(),
     },
-    onSubmit: (values) => {
-      alert(JSON.stringify(values, null, 2));
+    onSubmit: async (values) => {
+      await updateWorkshop(image, workshop.id, values);
     },
   });
+
+  const handleChange = async (e) => {
+    if (e.target.files[0]) {
+      //const imageUrl = await handleImageUpload(e, workshop.id);
+      setImage(URL.createObjectURL(e.target.files[0]));
+    }
+  }
 
   return (
     <>
@@ -38,21 +51,26 @@ export default function Workshop() {
             <ImageListItem key={workshop.image} style={{
               width: '100%',
             }}>
-              <img src={workshop.image} alt="" style={{
+              <img alt={''} src={image} style={{
                 height: '500px',
                 objectFit: 'cover',
-              }} />
+              }}></img>
+
               <ImageListItemBar
                 sx={{
                   background: 'none',
                 }}
                 position="top"
                 actionIcon={
-                  <IconButton
-                    sx={{ color: 'white', padding: 2 }}
-                  >
-                    <Iconify icon="eva:edit-2-outline" />
-                  </IconButton>
+                  <>
+                    <IconButton
+                      sx={{ color: 'white', padding: 2 }}
+                      onClick={() => handleChange()}
+                    >
+                      <Iconify icon="eva:edit-2-outline" />
+                    </IconButton>
+                    <input type="file" accept=".png, .jpg, .jpeg" onChange={handleChange} />
+                  </>
                 }
                 actionPosition="right"
               />

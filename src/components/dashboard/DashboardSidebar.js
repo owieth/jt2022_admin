@@ -64,19 +64,17 @@ export default function DashboardSidebar({ isOpenSidebar, onCloseSidebar }) {
       </Box>
 
       <Box sx={{ mb: 5, mx: 2.5 }}>
-        <Link underline="none" component={RouterLink} to="#">
-          <AccountStyle>
-            <Avatar />
-            <Box sx={{ ml: 2 }}>
-              <Typography variant="subtitle2" sx={{ color: 'text.primary' }}>
-                Admin
-              </Typography>
-              <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                Admin Account C4MP
-              </Typography>
-            </Box>
-          </AccountStyle>
-        </Link>
+        <AccountStyle>
+          <Avatar src='https://firebasestorage.googleapis.com/v0/b/jt2022-97562.appspot.com/o/users%2Fadmin.jpeg?alt=media&token=a15fd4db-df11-44c8-bdbe-5b0372d09c35' />
+          <Box sx={{ ml: 2 }}>
+            <Typography variant="subtitle2" sx={{ color: 'text.primary' }}>
+              Admin Account
+            </Typography>
+            <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+              admin@c4mp.ch
+            </Typography>
+          </Box>
+        </AccountStyle>
       </Box>
 
       <NavSection navConfig={navConfig} />
