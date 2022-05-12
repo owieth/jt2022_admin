@@ -1,45 +1,63 @@
-import { Box, Button, Card, Container, Grid, Stack, TextField } from '@mui/material';
+import { Button, Card, Container, Stack } from '@mui/material';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
 import IconButton from '@mui/material/IconButton';
 import ImageListItem from '@mui/material/ImageListItem';
 import ImageListItemBar from '@mui/material/ImageListItemBar';
-import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
-import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
-import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { useFormik } from 'formik';
-import React, { useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
-import { updateWorkshop } from 'src/service/firebase';
+import React, { useEffect, useRef, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import { deleteWorkshop } from 'src/service/firebase';
+import { Form } from '.';
+import { handleImageUpload, updateWorkshop } from '../../service/firebase';
 import Iconify from '../shared/Iconify';
 import Page from '../shared/Page';
 
 export default function Workshop() {
   const [image, setImage] = useState('');
-
+  const [open, setOpen] = React.useState(false);
+  const navigate = useNavigate();
   const location = useLocation();
+
   const workshop = location.state;
+  const fileRef = useRef();
 
   useEffect(() => {
     setImage(workshop.image);
   }, [workshop])
 
-  const formik = useFormik({
-    initialValues: {
-      name: workshop.name,
-      description: workshop.description,
-      date: new Date(),
-      startTime: new Date(),
-      endTime: new Date(),
-    },
-    onSubmit: async (values) => {
-      await updateWorkshop(image, workshop.id, values);
-    },
-  });
 
-  const handleChange = async (e) => {
+  const handleUpload = async (e) => {
     if (e.target.files[0]) {
-      //const imageUrl = await handleImageUpload(e, workshop.id);
-      setImage(URL.createObjectURL(e.target.files[0]));
+      const imageUrl = await handleImageUpload(e.target.files[0], workshop.id);
+      setImage(imageUrl);
+    }
+  }
+
+  const handleDelete = async () => {
+    await deleteWorkshop(workshop.id);
+    toast.success("Workshop wurde gelöscht!");
+    navigate('/dashboard/workshops', { replace: true });
+  }
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const handleSubmit = async (values) => {
+    if (values.startTime >= values.endTime) {
+      toast.error("Endzeit kann nicht vor Startzeit sein!");
+    } else {
+      await updateWorkshop(image, workshop.id, values);
+      toast.success("Workshop wurde geupdated!");
+      navigate('/dashboard/workshops', { replace: true });
     }
   }
 
@@ -48,12 +66,11 @@ export default function Workshop() {
       {workshop && <Page title="Workshop">
         <Container>
           <Card>
-            <ImageListItem key={workshop.image} style={{
+            <ImageListItem style={{
               width: '100%',
             }}>
               <img alt={''} src={image} style={{
-                height: '500px',
-                objectFit: 'cover',
+                height: '200px',
               }}></img>
 
               <ImageListItemBar
@@ -65,91 +82,50 @@ export default function Workshop() {
                   <>
                     <IconButton
                       sx={{ color: 'white', padding: 2 }}
-                      onClick={() => handleChange()}
+                      onClick={() => fileRef.current.click()}
                     >
                       <Iconify icon="eva:edit-2-outline" />
                     </IconButton>
-                    <input type="file" accept=".png, .jpg, .jpeg" onChange={handleChange} />
+                    <input ref={fileRef}
+                      type="file" accept=".png, .jpg, .jpeg" hidden onChange={handleUpload} />
                   </>
                 }
                 actionPosition="right"
               />
             </ImageListItem>
 
-            <form onSubmit={formik.handleSubmit}>
-              <Container sx={{ padding: 5 }}>
-                <Grid container spacing={5}>
-                  <Grid item xs={6}>
-                    <TextField
-                      fullWidth
-                      id="name"
-                      name="name"
-                      label="Name"
-                      value={formik.values.name}
-                      onChange={formik.handleChange}
-                    />
-                  </Grid>
+            <Stack
+              direction="row"
+              justifyContent="center"
+              alignItems="center"
+              paddingRight={5}
+              paddingBottom={5}
+              spacing={2}>
+              <Form initialValues={{
+                name: workshop.name,
+                description: workshop.description,
+                date: workshop.date,
+                startTime: workshop.startTime,
+                endTime: workshop.endTime,
+                house: workshop.house
+              }} isEdit={true} handleClose={handleClickOpen} handleSubmit={handleSubmit} />
+            </Stack>
 
-                  <Box width="100%" />
-
-                  <Grid item xs={6}>
-                    <TextField
-                      fullWidth
-                      id="description"
-                      name="description"
-                      label="Beschreibung"
-                      type="description"
-                      value={formik.values.description}
-                      onChange={formik.handleChange}
-                    />
-                  </Grid>
-
-                  <Box width="100%" />
-
-                  <LocalizationProvider dateAdapter={AdapterDateFns}>
-                    <Grid item xs={4}>
-                      <DesktopDatePicker
-                        label="Datum des Workshops"
-                        inputFormat="MM/dd/yyyy"
-                        value={formik.values.date}
-                        onChange={formik.handleChange}
-                        renderInput={(params) => <TextField {...params} />}
-                      />
-                    </Grid>
-
-                    <Grid item xs={4}>
-                      <DateTimePicker
-                        label="Startzeit"
-                        value={formik.values.startTime}
-                        onChange={formik.handleChange}
-                        renderInput={(params) => <TextField {...params} />}
-                      />
-                    </Grid>
-
-                    <Grid item xs={4}>
-                      <DateTimePicker
-                        label="Endzeit"
-                        value={formik.values.endTime}
-                        onChange={formik.handleChange}
-                        renderInput={(params) => <TextField {...params} />}
-                      />
-                    </Grid>
-
-                  </LocalizationProvider>
-                </Grid>
-
-              </Container>
-
-              <Stack
-                direction="row"
-                justifyContent="center"
-                alignItems="center"
-                paddingBottom={5}>
-                <Button color="primary" variant="contained" size="large" type="submit">
-                  Submit
-                </Button>
-              </Stack>
-            </form>
+            <Dialog
+              open={open}
+              keepMounted
+              onClose={handleClose}>
+              <DialogTitle>Workshop löschen?</DialogTitle>
+              <DialogContent>
+                <DialogContentText>
+                  Ein gelöschter Workshop muss neu erstellt werden!
+                </DialogContentText>
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={handleClose}>Abbrechen</Button>
+                <Button onClick={handleDelete} color="error">Löschen!</Button>
+              </DialogActions>
+            </Dialog>
           </Card>
         </Container>
       </Page>

@@ -1,14 +1,12 @@
 import { faker } from '@faker-js/faker';
 import { Container, Grid, Typography } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
-import { getCollection } from '../../service/firebase';
 import React, { useEffect, useState } from 'react';
+import { DashboardWidget } from '.';
+import { getCollection } from '../../service/firebase';
+import { fDate } from '../../utils/formatTime';
+import { AppOrderTimeline, AppWebsiteVisits, AttendeesChart, RegionsChart } from '../chart';
 import Page from '../shared/Page';
-import {
-  AttendeesChart, RegionsChart, AppOrderTimeline, AppWebsiteVisits
-} from '../chart';
-import { DashboardWidget } from '.'
-import { fDate } from '../../utils/formatTime'
 
 export default function DashboardOverview() {
   const theme = useTheme();

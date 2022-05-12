@@ -1,22 +1,48 @@
 import { Button, Container, Grid, Stack, Typography } from '@mui/material';
+import Dialog from '@mui/material/Dialog';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
 import { useEffect, useState } from 'react';
-import { Link as RouterLink } from 'react-router-dom';
-import Iconify from '../shared/Iconify';
+import { toast } from 'react-toastify';
+import { BlogPostCard, Form } from '.';
 import Page from '../../components/shared/Page';
-import { BlogPostCard } from '.';
-import { getCollection } from '../../service/firebase';
+import { createWorkshop, getCollection } from '../../service/firebase';
+import Iconify from '../shared/Iconify';
 
 export default function Workshops() {
   const [workshops, setWorkshops] = useState([]);
+  const [open, setOpen] = useState(false);
 
   useEffect(() => {
-    const fetchWorkshops = async () => {
-      const workshops = await getCollection("workshops");
-      setWorkshops(workshops);
-    }
+    let mounted = true;
 
-    fetchWorkshops();
-  }, [])
+    (async () => {
+      const workshops = await getCollection("workshops");
+      if (mounted) {
+        setWorkshops(workshops);
+      }
+    })();
+
+    return () => mounted = false;
+  }, [workshops])
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const handleSubmit = async (values) => {
+    if (values.startTime >= values.endTime) {
+      toast.error("Endzeit kann nicht vor Startzeit sein!");
+    } else {
+      await createWorkshop(values);
+      toast.success("Workshop wurde erstellt!");
+    }
+  }
 
   return (
     <Page title="Workshops">
@@ -25,7 +51,7 @@ export default function Workshops() {
           <Typography variant="h4" gutterBottom>
             Workshops
           </Typography>
-          <Button variant="contained" component={RouterLink} to="#" startIcon={<Iconify icon="eva:plus-fill" />}>
+          <Button variant="contained" onClick={handleClickOpen} startIcon={<Iconify icon="eva:plus-fill" />}>
             Neuer Workshop
           </Button>
         </Stack>
@@ -38,7 +64,30 @@ export default function Workshops() {
             ))
           }
         </Grid>
+
+        <Dialog
+          fullWidth={true}
+          maxWidth={'md'}
+          open={open}
+        >
+          <DialogTitle>Neuer Workshop erstellen</DialogTitle>
+          <DialogContent>
+            <DialogContentText>
+              Das Bild kann beim Bearbeiten ausgewählt werden. Der Workshop wird mit einem Platzhalterbild erstellt.
+            </DialogContentText>
+
+            <Form initialValues={{
+              name: '',
+              description: '',
+              date: new Date(),
+              startTime: new Date(),
+              endTime: new Date(),
+              house: 0
+            }} handleClose={handleClose} handleSubmit={handleSubmit} />
+
+          </DialogContent>
+        </Dialog>
       </Container>
-    </Page>
+    </Page >
   );
 }

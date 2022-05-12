@@ -1,0 +1,1 @@
+export const PLACEHOLDER_IMAGE_URL = "https://firebasestorage.googleapis.com/v0/b/jt2022-97562.appspot.com/o/workshops%2Fplaceholder?alt=media&token=e1acacdc-e6ee-4a4f-b84c-f07525c94f6b"
