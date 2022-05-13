@@ -17,6 +17,11 @@ const navConfig = [
     title: 'workshops',
     path: '/dashboard/workshops',
     icon: getIcon('eva:file-text-fill'),
+  },
+  {
+    title: 'Events',
+    path: '/dashboard/events',
+    icon: getIcon('eva:book-open-fill'),
   }
 ];
 

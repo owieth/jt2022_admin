@@ -49,6 +49,22 @@ export const createWorkshop = async (workshop) => {
     }
 };
 
+export const createEvent = async (event) => {
+    try {
+        const eventRef = doc(collection(db, "events"));
+
+        await setDoc(eventRef, {
+            name: event.name,
+            date: event.date,
+            startTime: event.startTime,
+            endTime: event.endTime,
+            house: event.house,
+        });
+    } catch (err) {
+        toast.error(err);
+    }
+};
+
 export const updateWorkshop = async (image, workshopId, workshop) => {
     try {
         const workshopRef = doc(db, "workshops", workshopId);
@@ -67,9 +83,33 @@ export const updateWorkshop = async (image, workshopId, workshop) => {
     }
 };
 
+export const updateEvent = async (eventId, event) => {
+    try {
+        const eventRef = doc(db, "events", eventId);
+
+        await updateDoc(eventRef, {
+            name: event.name,
+            date: event.date,
+            startTime: event.startTime,
+            endTime: event.endTime,
+            house: event.house,
+        });
+    } catch (err) {
+        toast.error(err);
+    }
+};
+
 export const deleteWorkshop = async (workshopId) => {
     try {
         await deleteDoc(doc(db, "workshops", workshopId));
+    } catch (err) {
+        toast.error(err);
+    }
+};
+
+export const deleteEvent = async (eventId) => {
+    try {
+        await deleteDoc(doc(db, "events", eventId));
     } catch (err) {
         toast.error(err);
     }

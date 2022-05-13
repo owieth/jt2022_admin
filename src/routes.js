@@ -7,6 +7,8 @@ import Login from './components/login/Login';
 import NotFound from './components/fallback/Page404';
 import Users from './components/users/Users';
 import Workshop from './components/workshops/Workshop';
+import Event from './components/events/Event';
+import Events from './components/events/Events';
 
 export default function Router() {
   return useRoutes([
@@ -18,6 +20,8 @@ export default function Router() {
         { path: 'users', element: <Users /> },
         { path: 'workshops/:id', element: <Workshop /> },
         { path: 'workshops', element: <Workshops /> },
+        { path: 'events/:id', element: <Event /> },
+        { path: 'events', element: <Events /> },
       ],
     },
     {

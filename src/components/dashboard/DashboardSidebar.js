@@ -1,15 +1,15 @@
-import { Avatar, Box, Button, Drawer, Link, Stack, Typography } from '@mui/material';
+import { Avatar, Box, Button, Drawer, Stack, Typography } from '@mui/material';
 import { styled } from '@mui/material/styles';
+import { signOut } from 'firebase/auth';
 import PropTypes from 'prop-types';
 import { useEffect } from 'react';
-import { Link as RouterLink, useLocation, useNavigate } from 'react-router-dom';
-import Logo from '../shared/Logo';
-import NavSection from '../navigation/NavSection';
-import Scrollbar from '../shared/Scrollbar';
+import { useLocation, useNavigate } from 'react-router-dom';
 import useResponsive from '../../hooks/useResponsive';
 import { auth } from '../../service/firebase';
 import navConfig from '../navigation/NavConfig';
-import { signOut } from 'firebase/auth';
+import NavSection from '../navigation/NavSection';
+import Logo from '../shared/Logo';
+import Scrollbar from '../shared/Scrollbar';
 
 const DRAWER_WIDTH = 280;
 
