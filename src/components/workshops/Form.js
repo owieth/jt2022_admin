@@ -3,13 +3,14 @@ import Box from '@mui/material/Box';
 import MenuItem from '@mui/material/MenuItem';
 import Select from '@mui/material/Select';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
-import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { TimePicker } from '@mui/x-date-pickers/TimePicker';
+import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import deLocale from 'date-fns/locale/de';
 import { useFormik } from 'formik';
 import DeleteIcon from '@mui/icons-material/Delete';
 import * as Yup from 'yup';
+import { startOfDay } from 'date-fns'
 
 export default function Form({ initialValues, handleSubmit, handleClose, isEdit = false }) {
     const formik = useFormik({
@@ -53,37 +54,6 @@ export default function Form({ initialValues, handleSubmit, handleClose, isEdit 
         <form onSubmit={formik.handleSubmit}>
             <Container sx={{ padding: 5 }}>
                 <Grid container spacing={5}>
-                    {/* <Grid item xs={12}>
-                    <ImageListItem style={{
-                      width: '100%',
-                    }}>
-                      <img alt={''} src={image} style={{
-                        height: '200px',
-                        objectFit: 'fill',
-                      }}></img>
-
-                      <ImageListItemBar
-                        sx={{
-                          background: 'none',
-                        }}
-                        position="top"
-                        actionIcon={
-                          <>
-                            <IconButton
-                              sx={{ color: 'white', padding: 2 }}
-                              onClick={() => fileRef.current.click()}
-                            >
-                              <Iconify icon="eva:edit-2-outline" />
-                            </IconButton>
-                            <input ref={fileRef}
-                              type="file" accept=".png, .jpg, .jpeg" hidden onChange={handleUpload} />
-                          </>
-                        }
-                        actionPosition="right"
-                      />
-                    </ImageListItem>
-                  </Grid> */}
-
                     <Grid item xs={6}>
                         <TextField
                             fullWidth
@@ -117,21 +87,23 @@ export default function Form({ initialValues, handleSubmit, handleClose, isEdit 
 
                     <LocalizationProvider dateAdapter={AdapterDateFns} locale={deLocale}>
                         <Grid item xs={4}>
-                            <DesktopDatePicker
+                            <DatePicker
                                 label="Datum des Workshops"
-                                inputFormat="dd.MM.yyyy"
                                 mask=""
-                                value={formik.values.date}
+                                value={startOfDay(formik.values.date)}
                                 onChange={(value) => {
                                     formik.setFieldValue('date', Date.parse(value));
+                                    formik.setFieldValue('startTime', Date.parse(value));
+                                    formik.setFieldValue('endTime', Date.parse(value));
                                 }}
                                 renderInput={(params) => <TextField {...params} />}
                             />
                         </Grid>
 
                         <Grid item xs={4}>
-                            <TimePicker
+                            <DateTimePicker
                                 label="Startzeit"
+                                mask=""
                                 value={formik.values.startTime}
                                 onChange={(value) => {
                                     formik.setFieldValue('startTime', Date.parse(value));
@@ -141,8 +113,9 @@ export default function Form({ initialValues, handleSubmit, handleClose, isEdit 
                         </Grid>
 
                         <Grid item xs={4}>
-                            <TimePicker
+                            <DateTimePicker
                                 label="Endzeit"
+                                mask=""
                                 value={formik.values.endTime}
                                 onChange={(value) => {
                                     formik.setFieldValue('endTime', Date.parse(value));

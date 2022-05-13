@@ -1,9 +1,15 @@
+import { IconButton } from '@mui/material';
+import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
 import FormControl from '@mui/material/FormControl';
+import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
+import OutlinedInput from '@mui/material/OutlinedInput';
 import Select from '@mui/material/Select';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import Iconify from '../shared/Iconify';
+
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -16,54 +22,56 @@ const MenuProps = {
     },
 };
 
-const names = [
-    'Oliver Hansen',
-    'Van Henry',
-    'April Tucker',
-    'Ralph Hubbard',
-    'Omar Alexander',
-    'Carlos Abbott',
-    'Miriam Wagner',
-    'Bradley Wilkerson',
-    'Virginia Andrews',
-    'Kelly Snyder',
-];
+export default function WorkshopsSelector({ workshops, userWorkshops }) {
+    const [usersWorkshop, setUsersWorkshops] = useState([]);
 
-export default function WorkshopsSelector(props) {
-    const [personName, setPersonName] = useState([]);
+    useEffect(() => {
+        setUsersWorkshops(userWorkshops);
+    }, [userWorkshops])
 
     const handleChange = (event) => {
         const {
             target: { value },
         } = event;
-        setPersonName(
+        setUsersWorkshops(
             typeof value === 'string' ? value.split(',') : value,
         );
     };
 
     return (
-        <div>
-            <FormControl sx={{ width: 300 }}>
-                <Select
-                    multiple
-                    value={personName}
-                    onChange={handleChange}
-                    renderValue={(selected) => (
-                        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                            {selected.map((value) => (
-                                <Chip key={value} label={value} />
-                            ))}
-                        </Box>
-                    )}
-                    MenuProps={MenuProps}
-                >
-                    {props.workshops.map((workshop) => (
-                        <MenuItem key={workshop.id} value={workshop.name}>
-                            {workshop.name}
-                        </MenuItem>
-                    ))}
-                </Select>
-            </FormControl>
-        </div>
+        <FormControl sx={{ width: 300 }}>
+            <InputLabel>Workshops</InputLabel>
+            <Select
+                multiple
+                value={usersWorkshop}
+                onChange={handleChange}
+                input={<OutlinedInput label="Workshops" />}
+                MenuProps={MenuProps}
+                renderValue={() => (
+                    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                        {usersWorkshop.map(({ name, image, bonk }, index) => (
+                            <Chip
+                                key={index}
+                                label={name}
+                                avatar={<Avatar src={image} />}
+                                onDelete={() => { }}
+                                //color={(bonk && 'error') || 'success'}
+                                deleteIcon={
+                                    <IconButton disabled>
+                                        <Iconify icon={bonk ? 'eva:checkmark-circle-outline' : 'eva:close-circle-outline'} width={24} height={24} />
+                                    </IconButton>
+                                }
+                            />
+                        ))}
+                    </Box>
+                )}
+            >
+                {workshops.map((workshop, index) => (
+                    <MenuItem key={index} value={workshop}>
+                        {workshop.name} ({workshop.attendees.length})
+                    </MenuItem>
+                ))}
+            </Select>
+        </FormControl>
     );
 }

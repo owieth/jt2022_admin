@@ -6,7 +6,7 @@ import {
 import { filter } from 'lodash';
 import * as React from 'react';
 import { useEffect, useState } from 'react';
-import { UserMoreMenu, UserRow } from '.';
+import { UserMoreMenu, UserRow, UserWorkshopsDialog } from '.';
 import { getCollection } from '../../service/firebase';
 import Page from '../shared/Page';
 import Scrollbar from '../shared/Scrollbar';
@@ -64,6 +64,10 @@ export default function Users() {
 
   const [workshops, setWorkshops] = useState([]);
 
+  const [open, setOpen] = useState(false);
+
+  const [workshopsToAssign, setWorkshopsToAssign] = useState([]);
+
   useEffect(() => {
     const fetchUsers = async () => {
       const users = await getCollection("users");
@@ -93,6 +97,11 @@ export default function Users() {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
   };
+
+  const handleWorkshopAssignment = (workshops) => {
+    setWorkshopsToAssign(workshops);
+    setOpen(true);
+  }
 
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - users.length) : 0;
 
@@ -135,31 +144,34 @@ export default function Users() {
                           <TableCell component="th" scope="row" padding="none">
                             <Stack direction="row" alignItems="center" spacing={2}>
                               <Avatar src={photoUrl} />
-                              <Typography variant="subtitle2" noWrap>
-                                {name}
-                              </Typography>
+                              <Stack direction="column">
+                                <Typography variant="subtitle2" noWrap>
+                                  {name}
+                                </Typography>
+                                <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                                  {email}
+                                </Typography>
+                              </Stack>
                             </Stack>
                           </TableCell>
+
                           <TableCell align="left">{region}</TableCell>
+
                           <TableCell align="left">{muncipality}</TableCell>
 
-                          {/* <TableCell align="left">
-                          <Label variant="ghost" color={(status === 'banned' && 'error') || 'success'}>
-                            {sentenceCase(status)}
-                          </Label>
-                        </TableCell> */}
-
                           <TableCell align="right">
-                            <WorkshopsSelector workshops={userWorkshops} />
+                            <WorkshopsSelector workshops={workshops} userWorkshops={userWorkshops} />
                           </TableCell>
 
                           <TableCell align="left">{isVolunteer ? 'Ja' : 'Nein'}</TableCell>
 
                           <TableCell align="right">
-                            <UserMoreMenu />
+                            {/* <UserMoreMenu handleClose={() => handleWorkshopAssignment(userWorkshops)} disabled={userWorkshops.length <= 0}/> */}
+                            <UserMoreMenu handleClose={() => handleWorkshopAssignment(userWorkshops)} />
                           </TableCell>
                         </TableRow>
                       );
+
                     })}
                     {emptyRows > 0 && (
                       <TableRow style={{ height: 53 * emptyRows }}>
@@ -181,6 +193,9 @@ export default function Users() {
             />
           </Card>
         </Container>
+
+        <UserWorkshopsDialog workshops={workshopsToAssign} open={open} handleClose={() => setOpen(false)} />
+
       </Page>}
     </>
   );

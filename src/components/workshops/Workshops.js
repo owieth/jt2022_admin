@@ -37,10 +37,11 @@ export default function Workshops() {
 
   const handleSubmit = async (values) => {
     if (values.startTime >= values.endTime) {
-      toast.error("Endzeit kann nicht vor Startzeit sein!");
+      toast.error("Endzeit kann nicht hinter Startzeit sein!");
     } else {
       await createWorkshop(values);
       toast.success("Workshop wurde erstellt!");
+      setOpen(false)
     }
   }
 

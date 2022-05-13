@@ -1,16 +1,19 @@
-import { Button, Card, Container, Stack } from '@mui/material';
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
-import DialogTitle from '@mui/material/DialogTitle';
-import IconButton from '@mui/material/IconButton';
-import ImageListItem from '@mui/material/ImageListItem';
-import ImageListItemBar from '@mui/material/ImageListItemBar';
+import {
+  Alert,
+  AlertTitle, Button,
+  Card,
+  Container, Dialog,
+  DialogActions,
+  DialogContent, DialogTitle,
+  IconButton,
+  ImageListItem,
+  ImageListItemBar, Stack
+} from '@mui/material';
 import React, { useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { deleteWorkshop } from 'src/service/firebase';
+import { deleteWorkshop, deleteWorkshopImage } from 'src/service/firebase';
+import { PLACEHOLDER_IMAGE_URL } from 'src/utils/constans';
 import { Form } from '.';
 import { handleImageUpload, updateWorkshop } from '../../service/firebase';
 import Iconify from '../shared/Iconify';
@@ -18,7 +21,7 @@ import Page from '../shared/Page';
 
 export default function Workshop() {
   const [image, setImage] = useState('');
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -29,7 +32,6 @@ export default function Workshop() {
     setImage(workshop.image);
   }, [workshop])
 
-
   const handleUpload = async (e) => {
     if (e.target.files[0]) {
       const imageUrl = await handleImageUpload(e.target.files[0], workshop.id);
@@ -39,6 +41,9 @@ export default function Workshop() {
 
   const handleDelete = async () => {
     await deleteWorkshop(workshop.id);
+    if (workshop.image !== PLACEHOLDER_IMAGE_URL) {
+      await deleteWorkshopImage(workshop.id);
+    }
     toast.success("Workshop wurde gelöscht!");
     navigate('/dashboard/workshops', { replace: true });
   }
@@ -53,13 +58,15 @@ export default function Workshop() {
 
   const handleSubmit = async (values) => {
     if (values.startTime >= values.endTime) {
-      toast.error("Endzeit kann nicht vor Startzeit sein!");
+      toast.error("Endzeit kann nicht hinter Startzeit sein!");
     } else {
       await updateWorkshop(image, workshop.id, values);
       toast.success("Workshop wurde geupdated!");
       navigate('/dashboard/workshops', { replace: true });
     }
   }
+
+  const hasAttendees = workshop.attendees.length > 0;
 
   return (
     <>
@@ -114,16 +121,26 @@ export default function Workshop() {
             <Dialog
               open={open}
               keepMounted
+              fullWidth={true}
+              maxWidth="sm"
               onClose={handleClose}>
               <DialogTitle>Workshop löschen?</DialogTitle>
               <DialogContent>
-                <DialogContentText>
-                  Ein gelöschter Workshop muss neu erstellt werden!
-                </DialogContentText>
+                <Stack sx={{ width: '100%' }} spacing={2}>
+                  <Alert severity="warning">
+                    <AlertTitle>Achtung</AlertTitle>
+                    Ein gelöschter Workshop muss neu erstellt werden!
+                  </Alert>
+
+                  {hasAttendees && <Alert severity="error">
+                    <AlertTitle>Fehler</AlertTitle>
+                    Diesem Workshop sind noch <strong>{workshop.attendees.length}</strong> Teilnehmer zugewiesen
+                  </Alert>}
+                </Stack>
               </DialogContent>
               <DialogActions>
                 <Button onClick={handleClose}>Abbrechen</Button>
-                <Button onClick={handleDelete} color="error">Löschen!</Button>
+                <Button onClick={handleDelete} color="error" disabled={hasAttendees}>Löschen!</Button>
               </DialogActions>
             </Dialog>
           </Card>
