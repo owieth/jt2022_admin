@@ -1,9 +1,9 @@
-import PropTypes from 'prop-types';
-import merge from 'lodash/merge';
-import ReactApexChart from 'react-apexcharts';
 import { Box, Card, CardHeader } from '@mui/material';
-import { fNumber } from '../../utils/formatNumber';
+import merge from 'lodash/merge';
+import PropTypes from 'prop-types';
+import ReactApexChart from 'react-apexcharts';
 import { BaseOptionChart } from '.';
+import { fNumber } from '../../utils/formatNumber';
 
 AttendeesChart.propTypes = {
   title: PropTypes.string,
@@ -27,19 +27,22 @@ export default function AttendeesChart({ title, subheader, chartData, ...other }
       },
     },
     plotOptions: {
-      bar: { horizontal: true, barHeight: '28%', borderRadius: 2 },
+      bar: { horizontal: true, barHeight: '50%', borderRadius: 5 },
     },
     xaxis: {
       categories: chartLabels,
+      show: false,
+      labels: {
+        formatter: (val) => val.toFixed(0),
+      },
     },
   });
 
   return (
     <Card {...other}>
       <CardHeader title={title} subheader={subheader} />
-
       <Box sx={{ mx: 3 }} dir="ltr">
-        <ReactApexChart type="bar" series={[{ data: chartSeries }]} options={chartOptions} height={364} />
+        <ReactApexChart type="bar" series={[{ data: chartSeries }]} options={chartOptions} height={500} />
       </Box>
     </Card>
   );

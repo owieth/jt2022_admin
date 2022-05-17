@@ -1,4 +1,3 @@
-import { faker } from '@faker-js/faker';
 import { Container, Grid, Typography } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import React, { useEffect, useState } from 'react';
@@ -6,6 +5,7 @@ import { DashboardWidget } from '.';
 import { getCollection } from '../../service/firebase';
 import { fDate } from '../../utils/formatTime';
 import { AppOrderTimeline, AppWebsiteVisits, AttendeesChart, RegionsChart } from '../chart';
+import { timeline } from '../constants/timeline';
 import Page from '../shared/Page';
 
 export default function DashboardOverview() {
@@ -24,6 +24,8 @@ export default function DashboardOverview() {
     fetchData();
   }, [])
 
+  //console.log(users.map(user => user.workshops.at(workshops.find(workshop => workshop.attendees.includes(user.id))?.id)?.state));
+
   return (
     <Page title="Dashboard">
       <Container maxWidth="xl">
@@ -32,24 +34,44 @@ export default function DashboardOverview() {
         </Typography>
 
         <Grid container spacing={3}>
-          <Grid item xs={12} sm={6} md={3}>
-            <DashboardWidget title="Anzahl Workshops" total={workshops.length} icon={'ant-design:android-filled'} />
+          <Grid item xs={12} sm={6} md={4}>
+            <DashboardWidget title="Anzahl Workshops" total={workshops.length} icon={'eva:file-text-outline'} />
           </Grid>
 
-          <Grid item xs={12} sm={6} md={3}>
-            <DashboardWidget title="Anzahl Teilnehmer" total={users.length} color="info" icon={'ant-design:apple-filled'} />
+          <Grid item xs={12} sm={6} md={4}>
+            <DashboardWidget title="Anzahl Teilnehmer" total={users.length} color="warning" icon={'eva:people-outline'} />
           </Grid>
 
-          <Grid item xs={12} sm={6} md={3}>
-            <DashboardWidget title="Item Orders" total={1723315} color="warning" icon={'ant-design:windows-filled'} />
-          </Grid>
-
-          <Grid item xs={12} sm={6} md={3}>
-            <DashboardWidget title="Bug Reports" total={234} color="error" icon={'ant-design:bug-filled'} />
+          <Grid item xs={12} sm={6} md={4}>
+            <DashboardWidget title="Anzahl Helfer" total={users.filter((user) => user.isVolunteer).length} color="error" icon={'eva:person-outline'} />
           </Grid>
 
           <Grid item xs={12} md={6} lg={8}>
             <AppWebsiteVisits
+              title="Anmeldungen pro Workshop"
+              chartLabels={workshops.map(workshop => workshop.name)}
+              chartData={[
+                {
+                  name: 'In Bearbeitung',
+                  type: 'column',
+                  fill: 'solid',
+                  data: Array.from(Array(10).keys())
+                },
+                {
+                  name: 'Bestätigt',
+                  type: 'area',
+                  fill: 'gradient',
+                  data: [44, 55, 41, 67, 22, 43, 21, 41, 56, 27, 43],
+                },
+                {
+                  name: 'Abgelehnt',
+                  type: 'line',
+                  fill: 'solid',
+                  data: [30, 25, 36, 30, 45, 35, 64, 52, 59, 36, 39],
+                },
+              ]}
+            />
+            {/* <AppWebsiteVisits
               title="Website Visits"
               subheader="(+43%) than last year"
               chartLabels={[
@@ -85,7 +107,7 @@ export default function DashboardOverview() {
                   data: [30, 25, 36, 30, 45, 35, 64, 52, 59, 36, 39],
                 },
               ]}
-            />
+            /> */}
           </Grid>
 
           <Grid item xs={12} md={6} lg={4}>
@@ -94,7 +116,7 @@ export default function DashboardOverview() {
               chartData={users.map((user) => {
                 return {
                   label: user.region,
-                  value: new Set(users.filter((u) => u.region === user.region)).size
+                  value: users.filter((u) => u.region === user.region).length
                 }
               })}
               chartColors={[
@@ -122,17 +144,11 @@ export default function DashboardOverview() {
           <Grid item xs={12} md={6} lg={4}>
             <AppOrderTimeline
               title="Order Timeline"
-              list={[...Array(5)].map((_, index) => ({
-                id: faker.datatype.uuid(),
-                title: [
-                  '1983, orders, $4220',
-                  '12 Invoices have been paid',
-                  'Order #37745 from September',
-                  'New order placed #XF-2356',
-                  'New order placed #XF-2346',
-                ][index],
+              list={timeline.map((day, index) => ({
+                id: index,
+                title: day.event,
                 type: `order${index + 1}`,
-                time: faker.date.past(),
+                time: day.time
               }))}
             />
           </Grid>

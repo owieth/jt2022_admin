@@ -31,8 +31,6 @@ export default function AppOrderTimeline({ title, subheader, list, ...other }) {
   );
 }
 
-// ----------------------------------------------------------------------
-
 OrderItem.propTypes = {
   isLast: PropTypes.bool,
   item: PropTypes.shape({

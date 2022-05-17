@@ -1,7 +1,6 @@
-import PropTypes from 'prop-types';
-import { alpha, styled } from '@mui/material/styles';
 import { Card, Typography } from '@mui/material';
-import { fShortenNumber } from '../../utils/formatNumber';
+import { alpha, styled } from '@mui/material/styles';
+import PropTypes from 'prop-types';
 import Iconify from '../shared/Iconify';
 
 const IconWrapperStyle = styled('div')(({ theme }) => ({
@@ -49,7 +48,7 @@ export default function DashboardWidget({ title, total, icon, color = 'primary',
         <Iconify icon={icon} width={24} height={24} />
       </IconWrapperStyle>
 
-      <Typography variant="h3">{fShortenNumber(total)}</Typography>
+      <Typography variant="h3">{total}</Typography>
 
       <Typography variant="subtitle2" sx={{ opacity: 0.72 }}>
         {title}

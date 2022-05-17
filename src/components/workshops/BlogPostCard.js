@@ -1,6 +1,8 @@
 import { Box, Card, CardContent, Grid, Link, Typography } from '@mui/material';
 import { styled } from '@mui/material/styles';
+import { format } from 'date-fns';
 import { Link as RouterLink } from 'react-router-dom';
+import { getHouseByKey } from '../constants/house';
 import Iconify from '../shared/Iconify';
 
 const CardMediaStyle = styled('div')({
@@ -32,7 +34,7 @@ const CoverImgStyle = styled('img')({
 });
 
 export default function BlogPostCard({ index, workshop }) {
-  const { attendees, name, description, date, startTime, endTime, image } = workshop;
+  const { attendees, name, date, startTime, endTime, image, house } = workshop;
 
   return (
     <Grid item xs={12} sm={6} md={3}>
@@ -42,10 +44,6 @@ export default function BlogPostCard({ index, workshop }) {
         </CardMediaStyle>
 
         <CardContent>
-          <Typography gutterBottom variant="caption" sx={{ color: 'text.disabled', display: 'block' }}>
-            {/* {fDate()} */}
-          </Typography>
-
           <TitleStyle
             to={`${index}`}
             state={workshop}
@@ -56,6 +54,19 @@ export default function BlogPostCard({ index, workshop }) {
           >
             {name}
           </TitleStyle>
+          <Box
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              ml: 0,
+              marginTop: '10px',
+            }}
+          >
+            <Iconify icon="eva:clock-outline" sx={{ width: 16, height: 16, mr: 0.5, color: 'text.disabled' }} />
+            <Typography variant="caption" sx={{ color: 'text.disabled', display: 'block' }}>
+              {format(date, 'dd MMM. Y')} ({format(startTime, 'HH:mm')} - {format(endTime, 'HH:mm')})
+            </Typography>
+          </Box>
 
           <InfoStyle>
             <Box
@@ -76,7 +87,7 @@ export default function BlogPostCard({ index, workshop }) {
               }}
             >
               <Iconify icon="eva:pin-outline" sx={{ width: 16, height: 16, mr: 0.5 }} />
-              <Typography variant="caption">Gebäude A, 3. Stock</Typography>
+              <Typography variant="caption">{getHouseByKey(house)}</Typography>
             </Box>
           </InfoStyle>
         </CardContent>

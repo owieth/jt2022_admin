@@ -72,10 +72,6 @@ export default function UserWorkshopsDialog({ workshops, open, handleClose }) {
                                 <TableBody>
                                     {workshops.map(({ id, name, image, date, house }) => {
                                         const isItemSelected = selected.indexOf(name) !== -1;
-
-                                        console.log(date);
-                                        console.log(house);
-
                                         return (
                                             <TableRow
                                                 hover

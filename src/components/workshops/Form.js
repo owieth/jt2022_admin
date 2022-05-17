@@ -1,16 +1,15 @@
+import DeleteIcon from '@mui/icons-material/Delete';
 import { Button, Container, Grid, Stack, TextField } from '@mui/material';
 import Box from '@mui/material/Box';
 import MenuItem from '@mui/material/MenuItem';
-import Select from '@mui/material/Select';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { startOfDay } from 'date-fns';
 import deLocale from 'date-fns/locale/de';
 import { useFormik } from 'formik';
-import DeleteIcon from '@mui/icons-material/Delete';
 import * as Yup from 'yup';
-import { startOfDay } from 'date-fns'
 
 export default function Form({ initialValues, handleSubmit, handleClose, isEdit = false }) {
     const formik = useFormik({
@@ -72,6 +71,8 @@ export default function Form({ initialValues, handleSubmit, handleClose, isEdit 
                     <Grid item xs={6}>
                         <TextField
                             fullWidth
+                            multiline
+                            maxRows={4}
                             id="description"
                             name="description"
                             label="Beschreibung"
@@ -125,8 +126,10 @@ export default function Form({ initialValues, handleSubmit, handleClose, isEdit 
                         </Grid>
                     </LocalizationProvider>
 
-                    <Grid item xs={4}>
-                        <Select
+                    <Grid item xs={6}>
+                        <TextField
+                            select
+                            fullWidth
                             label="Wo findet der Workshop statt?"
                             value={formik.values.house}
                             onChange={(value) => {
@@ -138,7 +141,7 @@ export default function Form({ initialValues, handleSubmit, handleClose, isEdit 
                                     {house.value}
                                 </MenuItem>
                             ))}
-                        </Select>
+                        </TextField>
                     </Grid>
                 </Grid>
             </Container>

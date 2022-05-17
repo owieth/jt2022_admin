@@ -60,7 +60,7 @@ export default function Events() {
           {
             events &&
             events.map((event, index) => (
-              <BlogPostCard key={index} workshop={event} index={index} />
+              <BlogPostCard key={index} event={event} index={index} />
             ))
           }
         </Grid>

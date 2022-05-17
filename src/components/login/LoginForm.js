@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import * as Yup from 'yup';
 import Iconify from '../shared/Iconify';
 import { getAuth, signInWithEmailAndPassword } from 'firebase/auth'
+import { toast } from 'react-toastify';
 
 export default function LoginForm() {
   const navigate = useNavigate();
@@ -13,7 +14,7 @@ export default function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
 
   const LoginSchema = Yup.object().shape({
-    email: Yup.string().email('Email muss eine valide Email sein').required('Email ist obligatorisch'),
+    email: Yup.string().email('Email muss eine valide Email sein').oneOf(['admin@c4mp.ch'], 'Du musst dich mit dem Admin Account anmelden').required('Email ist obligatorisch'),
     password: Yup.string().required('Passwort ist obligatorisch'),
   });
 
@@ -23,8 +24,12 @@ export default function LoginForm() {
       password: '',
     },
     validationSchema: LoginSchema,
-    onSubmit: () => {
-      signInWithEmailAndPassword(getAuth(), formik.values.email, formik.values.password)
+    onSubmit: async () => {
+      try {
+        await signInWithEmailAndPassword(getAuth(), formik.values.email, formik.values.password);
+      } catch (error) {
+        toast.error("Email oder Passwort falsch!")
+      }
       navigate('/dashboard/overview', { replace: true });
     },
   });
