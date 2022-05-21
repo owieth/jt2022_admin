@@ -10,24 +10,27 @@ import * as React from 'react';
 import { useState } from 'react';
 import { UserListHead, UserWorkshopListToolbar } from '.';
 import Scrollbar from '../shared/Scrollbar';
+import { getHouseByKey } from '../constants/house'
+import { format } from 'date-fns';
+import { updateWorkshopAttendance } from '../../service/firebase';
 
-export default function UserWorkshopsDialog({ workshops, open, handleClose }) {
+export default function UserWorkshopsDialog({ userId, workshops, open, handleClose }) {
     const [selected, setSelected] = useState([]);
 
     const handleSelectAllClick = (event) => {
         if (event.target.checked) {
-            const newSelecteds = workshops.map((n) => n.name);
+            const newSelecteds = workshops.map((n) => n.id);
             setSelected(newSelecteds);
             return;
         }
         setSelected([]);
     };
 
-    const handleClick = (event, name) => {
-        const selectedIndex = selected.indexOf(name);
+    const handleClick = (id) => {
+        const selectedIndex = selected.indexOf(id);
         let newSelected = [];
         if (selectedIndex === -1) {
-            newSelected = newSelected.concat(selected, name);
+            newSelected = newSelected.concat(selected, id);
         } else if (selectedIndex === 0) {
             newSelected = newSelected.concat(selected.slice(1));
         } else if (selectedIndex === selected.length - 1) {
@@ -37,6 +40,11 @@ export default function UserWorkshopsDialog({ workshops, open, handleClose }) {
         }
         setSelected(newSelected);
     };
+
+    const handleAssignment = async (state) => {
+        selected.forEach(async (workshop) => await updateWorkshopAttendance(workshop, userId, state));
+        handleClose();
+    }
 
     const TABLE_HEAD = [
         { id: 'name', label: 'Name' },
@@ -58,7 +66,7 @@ export default function UserWorkshopsDialog({ workshops, open, handleClose }) {
                 </DialogContentText>
 
                 <Card>
-                    <UserWorkshopListToolbar numSelected={selected.length} />
+                    <UserWorkshopListToolbar numSelected={selected.length} handleAssignment={handleAssignment} />
 
                     <Scrollbar>
                         <TableContainer sx={{ minWidth: 800 }}>
@@ -70,8 +78,8 @@ export default function UserWorkshopsDialog({ workshops, open, handleClose }) {
                                     onSelectAllClick={handleSelectAllClick}
                                 />
                                 <TableBody>
-                                    {workshops.map(({ id, name, image, date, house }) => {
-                                        const isItemSelected = selected.indexOf(name) !== -1;
+                                    {workshops.map(({ id, name, image, date, startTime, endTime, house }) => {
+                                        const isItemSelected = selected.indexOf(id) !== -1;
                                         return (
                                             <TableRow
                                                 hover
@@ -81,7 +89,7 @@ export default function UserWorkshopsDialog({ workshops, open, handleClose }) {
                                                 selected={isItemSelected}
                                             >
                                                 <TableCell padding="checkbox">
-                                                    <Checkbox checked={isItemSelected} onChange={(event) => handleClick(event, name)} />
+                                                    <Checkbox checked={isItemSelected} onChange={() => handleClick(id)} />
                                                 </TableCell>
                                                 <TableCell component="th" scope="row">
                                                     <Stack direction="row" alignItems="center" spacing={2}>
@@ -91,8 +99,8 @@ export default function UserWorkshopsDialog({ workshops, open, handleClose }) {
                                                         </Typography>
                                                     </Stack>
                                                 </TableCell>
-                                                <TableCell>{date}</TableCell>
-                                                <TableCell>{house}</TableCell>
+                                                <TableCell>{format(date, 'dd MMM. Y')} ({format(startTime, 'HH:mm')} - {format(endTime, 'HH:mm')})</TableCell>
+                                                <TableCell>{getHouseByKey(house)}</TableCell>
                                             </TableRow>
                                         )
                                     }

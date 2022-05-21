@@ -1,8 +1,6 @@
-// material
+
 import { alpha } from '@mui/material/styles';
 import palette from './palette';
-
-// ----------------------------------------------------------------------
 
 const LIGHT_MODE = palette.grey[500];
 

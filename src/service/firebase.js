@@ -1,9 +1,9 @@
 import { initializeApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
-import { collection, doc, getDocs, setDoc, getFirestore, updateDoc, deleteDoc } from "firebase/firestore";
-import { getDownloadURL, getStorage, ref, uploadBytes, deleteObject } from "firebase/storage";
-import { PLACEHOLDER_IMAGE_URL } from '../utils/constans';
+import { collection, deleteDoc, doc, getDocs, getFirestore, setDoc, getDoc, updateDoc, arrayRemove } from "firebase/firestore";
+import { deleteObject, getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
 import { toast } from 'react-toastify';
+import { PLACEHOLDER_IMAGE_URL } from '../utils/constans';
 
 const firebaseConfig = {
     apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
@@ -94,6 +94,52 @@ export const updateEvent = async (eventId, event) => {
             endTime: event.endTime,
             house: event.house,
         });
+    } catch (err) {
+        toast.error(err);
+    }
+};
+
+export const assignWorkshop = async (workshopId, userId) => {
+    try {
+        const userRef = doc(db, "users", userId);
+        const user = await (await getDoc(userRef)).data();
+
+        const updatedWorkshop = user.workshops.find((workshop) => workshop.id === workshopId);
+        //updatedWorkshop.state = state;
+
+        await updateDoc(userRef, {
+            workshops: user.workshops
+        });
+
+        // if (state === 2) {
+        //     const workshopRef = doc(db, "workshops", workshopId);
+        //     await updateDoc(workshopRef, {
+        //         attendees: arrayRemove(userId)
+        //     });
+        // }
+    } catch (err) {
+        toast.error(err);
+    }
+};
+
+
+export const updateWorkshopAttendance = async (workshopId, userId, state) => {
+    try {
+        const userRef = doc(db, "users", userId);
+        const user = await (await getDoc(userRef)).data();
+
+        user.workshops.find((workshop) => workshop.id === workshopId).state = state;
+
+        await updateDoc(userRef, {
+            workshops: user.workshops
+        });
+
+        // if (state === 2) {
+        //     const workshopRef = doc(db, "workshops", workshopId);
+        //     await updateDoc(workshopRef, {
+        //         attendees: arrayRemove(userId)
+        //     });
+        // }
     } catch (err) {
         toast.error(err);
     }

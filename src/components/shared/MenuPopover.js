@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { Popover } from '@mui/material';
 import { alpha, styled } from '@mui/material/styles';
 
-// ----------------------------------------------------------------------
+
 
 const ArrowStyle = styled('span')(({ theme }) => ({
   [theme.breakpoints.up('sm')]: {
@@ -22,7 +22,7 @@ const ArrowStyle = styled('span')(({ theme }) => ({
   },
 }));
 
-// ----------------------------------------------------------------------
+
 
 MenuPopover.propTypes = {
   children: PropTypes.node.isRequired,

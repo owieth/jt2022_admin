@@ -9,7 +9,7 @@ const RootStyle = styled(Toolbar)(({ theme }) => ({
     padding: theme.spacing(0, 1, 0, 3),
 }));
 
-export default function UserWorkshopListToolbar({ numSelected }) {
+export default function UserWorkshopListToolbar({ numSelected, handleAssignment }) {
     return (
         <RootStyle
             sx={{
@@ -19,13 +19,22 @@ export default function UserWorkshopListToolbar({ numSelected }) {
             <Typography variant="subtitle1">
                 {numSelected} Workshops ausgewählt
             </Typography>
-            <Tooltip title="Ausgewählte Workshops zuweisen">
-                <span >
-                    <IconButton color="primary" disabled={numSelected === 0}>
-                        <Iconify icon="eva:log-in-outline" />
-                    </IconButton>
-                </span>
-            </Tooltip>
+            <div>
+                <Tooltip title="Ausgewählte Workshops ablehnen">
+                    <span >
+                        <IconButton color="primary" disabled={numSelected === 0} onClick={() => handleAssignment(2)}>
+                            <Iconify icon="eva:close-circle-outline" />
+                        </IconButton>
+                    </span>
+                </Tooltip>
+                <Tooltip title="Ausgewählte Workshops zuweisen">
+                    <span >
+                        <IconButton color="primary" disabled={numSelected === 0} onClick={() => handleAssignment(1)}>
+                            <Iconify icon="eva:checkmark-circle-outline" />
+                        </IconButton>
+                    </span>
+                </Tooltip>
+            </div>
         </RootStyle >
     )
 }

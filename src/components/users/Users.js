@@ -1,16 +1,14 @@
 import {
-  Avatar, Card, Container, Stack, Table, TableBody,
+  Card, Container, Stack, Table, TableBody,
   TableCell, TableContainer,
   TablePagination, TableRow, Typography
 } from '@mui/material';
-import { filter } from 'lodash';
 import * as React from 'react';
 import { useEffect, useState } from 'react';
-import { UserMoreMenu, UserRow, UserWorkshopsDialog } from '.';
+import { TableHeaderRow, UserRow, UserWorkshopsDialog } from '.';
 import { getCollection } from '../../service/firebase';
 import Page from '../shared/Page';
 import Scrollbar from '../shared/Scrollbar';
-import WorkshopsSelector from '../shared/WorkshopsSelector';
 
 const TABLE_HEAD = [
   { id: 'name', label: 'Name', },
@@ -36,16 +34,14 @@ function getComparator(order, orderBy) {
     : (a, b) => -descendingComparator(a, b, orderBy);
 }
 
-function applySortFilter(array, comparator, query) {
+function applySortFilter(array, comparator) {
   const stabilizedThis = array.map((el, index) => [el, index]);
   stabilizedThis.sort((a, b) => {
     const order = comparator(a[0], b[0]);
     if (order !== 0) return order;
     return a[1] - b[1];
   });
-  if (query) {
-    return filter(array, (_user) => _user.name.toLowerCase().indexOf(query.toLowerCase()) !== -1);
-  }
+
   return stabilizedThis.map((el) => el[0]);
 }
 
@@ -56,11 +52,11 @@ export default function Users() {
 
   const [orderBy, setOrderBy] = useState('name');
 
-  const [filterName] = useState('');
-
   const [rowsPerPage, setRowsPerPage] = useState(50);
 
   const [users, setUsers] = useState([]);
+
+  const [user, setUser] = useState();
 
   const [workshops, setWorkshops] = useState([]);
 
@@ -98,14 +94,15 @@ export default function Users() {
     setPage(0);
   };
 
-  const handleWorkshopAssignment = (workshops) => {
+  const handleWorkshopAssignment = (workshops, userId) => {
+    setUser(userId);
     setWorkshopsToAssign(workshops);
     setOpen(true);
   }
 
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - users.length) : 0;
 
-  const filteredUsers = applySortFilter(users, getComparator(order, orderBy), filterName);
+  const filteredUsers = applySortFilter(users, getComparator(order, orderBy));
 
   return (
     <>
@@ -121,7 +118,7 @@ export default function Users() {
             <Scrollbar>
               <TableContainer sx={{ minWidth: 800 }}>
                 <Table>
-                  <UserRow
+                  <TableHeaderRow
                     order={order}
                     orderBy={orderBy}
                     headLabel={TABLE_HEAD}
@@ -130,48 +127,10 @@ export default function Users() {
                   />
                   <TableBody>
                     {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((user) => {
-                      const { id, name, email, photoUrl, region, muncipality, isVolunteer } = user;
-
+                      const { id } = user;
                       const userWorkshops = workshops.filter((workshop) => workshop.attendees.includes(id));
 
-                      return (
-                        <TableRow
-                          hover
-                          key={id}
-                          tabIndex={-1}
-                          role="checkbox"
-                        >
-                          <TableCell component="th" scope="row" padding="none">
-                            <Stack direction="row" alignItems="center" spacing={2}>
-                              <Avatar src={photoUrl} />
-                              <Stack direction="column">
-                                <Typography variant="subtitle2" noWrap>
-                                  {name}
-                                </Typography>
-                                <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                                  {email}
-                                </Typography>
-                              </Stack>
-                            </Stack>
-                          </TableCell>
-
-                          <TableCell align="left">{region}</TableCell>
-
-                          <TableCell align="left">{muncipality}</TableCell>
-
-                          <TableCell align="right">
-                            <WorkshopsSelector workshops={workshops} userWorkshops={userWorkshops} />
-                          </TableCell>
-
-                          <TableCell align="left">{isVolunteer ? 'Ja' : 'Nein'}</TableCell>
-
-                          <TableCell align="right">
-                            {/* <UserMoreMenu handleClose={() => handleWorkshopAssignment(userWorkshops)} disabled={userWorkshops.length <= 0}/> */}
-                            <UserMoreMenu handleClose={() => handleWorkshopAssignment(userWorkshops)} />
-                          </TableCell>
-                        </TableRow>
-                      );
-
+                      return <UserRow key={id} user={user} workshops={workshops} userWorkshops={userWorkshops} handleWorkshopAssignment={handleWorkshopAssignment} />
                     })}
                     {emptyRows > 0 && (
                       <TableRow style={{ height: 53 * emptyRows }}>
@@ -194,7 +153,7 @@ export default function Users() {
           </Card>
         </Container>
 
-        <UserWorkshopsDialog workshops={workshopsToAssign} open={open} handleClose={() => setOpen(false)} />
+        <UserWorkshopsDialog userId={user} workshops={workshopsToAssign} open={open} handleClose={() => setOpen(false)} />
 
       </Page>}
     </>

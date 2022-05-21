@@ -1,9 +1,9 @@
 import PropTypes from 'prop-types';
-// @mui
+
 import { alpha, styled } from '@mui/material/styles';
 import { Box } from '@mui/material';
 
-// ----------------------------------------------------------------------
+
 
 const RootStyle = styled('span')(({ theme, ownerState }) => {
   const isLight = theme.palette.mode === 'light';
@@ -44,25 +44,25 @@ const RootStyle = styled('span')(({ theme, ownerState }) => {
 
     ...(color !== 'default'
       ? {
-          ...(variant === 'filled' && { ...styleFilled(color) }),
-          ...(variant === 'outlined' && { ...styleOutlined(color) }),
-          ...(variant === 'ghost' && { ...styleGhost(color) }),
-        }
+        ...(variant === 'filled' && { ...styleFilled(color) }),
+        ...(variant === 'outlined' && { ...styleOutlined(color) }),
+        ...(variant === 'ghost' && { ...styleGhost(color) }),
+      }
       : {
-          ...(variant === 'outlined' && {
-            backgroundColor: 'transparent',
-            color: theme.palette.text.primary,
-            border: `1px solid ${theme.palette.grey[500_32]}`,
-          }),
-          ...(variant === 'ghost' && {
-            color: isLight ? theme.palette.text.secondary : theme.palette.common.white,
-            backgroundColor: theme.palette.grey[500_16],
-          }),
+        ...(variant === 'outlined' && {
+          backgroundColor: 'transparent',
+          color: theme.palette.text.primary,
+          border: `1px solid ${theme.palette.grey[500_32]}`,
         }),
+        ...(variant === 'ghost' && {
+          color: isLight ? theme.palette.text.secondary : theme.palette.common.white,
+          backgroundColor: theme.palette.grey[500_16],
+        }),
+      }),
   };
 });
 
-// ----------------------------------------------------------------------
+
 
 Label.propTypes = {
   children: PropTypes.node,

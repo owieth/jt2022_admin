@@ -1,10 +1,10 @@
 import PropTypes from 'prop-types';
 import SimpleBarReact from 'simplebar-react';
-// @mui
+
 import { alpha, styled } from '@mui/material/styles';
 import { Box } from '@mui/material';
 
-// ----------------------------------------------------------------------
+
 
 const RootStyle = styled('div')(() => ({
   flexGrow: 1,
@@ -33,7 +33,7 @@ const SimpleBarStyle = styled(SimpleBarReact)(({ theme }) => ({
   },
 }));
 
-// ----------------------------------------------------------------------
+
 
 Scrollbar.propTypes = {
   children: PropTypes.node.isRequired,

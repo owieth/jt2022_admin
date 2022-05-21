@@ -86,7 +86,7 @@ export default function Form({ initialValues, handleSubmit, handleClose, isEdit 
 
                     <Box width="100%" />
 
-                    <LocalizationProvider dateAdapter={AdapterDateFns} locale={deLocale}>
+                    <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={deLocale}>
                         <Grid item xs={4}>
                             <DatePicker
                                 label="Datum des Workshops"

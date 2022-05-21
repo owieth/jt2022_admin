@@ -1,4 +1,3 @@
-import { IconButton } from '@mui/material';
 import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
 import Chip from '@mui/material/Chip';
@@ -8,7 +7,6 @@ import MenuItem from '@mui/material/MenuItem';
 import OutlinedInput from '@mui/material/OutlinedInput';
 import Select from '@mui/material/Select';
 import React, { useEffect, useState } from 'react';
-import Iconify from '../shared/Iconify';
 
 
 const ITEM_HEIGHT = 48;
@@ -22,7 +20,7 @@ const MenuProps = {
     },
 };
 
-export default function WorkshopsSelector({ workshops, userWorkshops }) {
+export default function WorkshopsSelector({ workshops, userWorkshops, workshopState, emitWorkshopChange }) {
     const [usersWorkshop, setUsersWorkshops] = useState([]);
 
     useEffect(() => {
@@ -33,10 +31,24 @@ export default function WorkshopsSelector({ workshops, userWorkshops }) {
         const {
             target: { value },
         } = event;
+        emitWorkshopChange(value);
         setUsersWorkshops(
             typeof value === 'string' ? value.split(',') : value,
         );
     };
+
+    const handleWorkshopState = (id) => {
+        switch (workshopState.find((workshop) => workshop.id === id)?.state) {
+            case 1:
+                return 'success'
+
+            case 2:
+                return 'error'
+
+            default:
+                break;
+        }
+    }
 
     return (
         <FormControl sx={{ width: 300 }}>
@@ -49,20 +61,17 @@ export default function WorkshopsSelector({ workshops, userWorkshops }) {
                 MenuProps={MenuProps}
                 renderValue={() => (
                     <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                        {usersWorkshop.map(({ name, image, bonk }, index) => (
-                            <Chip
+                        {usersWorkshop.map(({ id, name, image }, index) => {
+                            const state = handleWorkshopState(id);
+                            return <Chip
                                 key={index}
                                 label={name}
+                                variant={!state ? "outlined" : "filled"}
                                 avatar={<Avatar src={image} />}
-                                onDelete={() => { }}
-                                //color={(bonk && 'error') || 'success'}
-                                deleteIcon={
-                                    <IconButton disabled>
-                                        <Iconify icon={bonk ? 'eva:checkmark-circle-outline' : 'eva:close-circle-outline'} width={24} height={24} />
-                                    </IconButton>
-                                }
+                                color={state}
+                                sx={{ color: state && 'white' }}
                             />
-                        ))}
+                        })}
                     </Box>
                 )}
             >

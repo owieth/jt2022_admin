@@ -1,65 +1,71 @@
-import { Box, TableCell, TableHead, TableRow, TableSortLabel } from '@mui/material';
-import PropTypes from 'prop-types';
+import {
+    Avatar, IconButton, Stack, TableCell, TableRow, Tooltip, Typography
+} from '@mui/material';
+import React, { useState, useEffect } from 'react';
+import { UserMoreMenu } from '.';
+import Iconify from '../shared/Iconify';
+import WorkshopsSelector from '../shared/WorkshopsSelector';
 
-const visuallyHidden = {
-  border: 0,
-  margin: -1,
-  padding: 0,
-  width: '1px',
-  height: '1px',
-  overflow: 'hidden',
-  position: 'absolute',
-  whiteSpace: 'nowrap',
-  clip: 'rect(0 0 0 0)',
-};
+export default function UserRow({ user, workshops, userWorkshops, handleWorkshopAssignment }) {
+    const { id, name, email, photoUrl, region, muncipality, isVolunteer } = user;
 
-UserRow.propTypes = {
-  order: PropTypes.oneOf(['asc', 'desc']),
-  orderBy: PropTypes.string,
-  headLabel: PropTypes.array,
-  onRequestSort: PropTypes.func,
-};
+    const [isMenuDisabled, setIsMenuDisabled] = useState(true)
 
-export default function UserRow({
-  order,
-  orderBy,
-  headLabel,
-  onRequestSort,
-}) {
-  const createSortHandler = (property) => (event) => {
-    onRequestSort(event, property);
-  };
+    useEffect(() => {
+        setIsMenuDisabled(userWorkshops.length <= 0)
+    }, [userWorkshops])
 
-  return (
-    <TableHead>
-      <TableRow>
-        {headLabel.map((headCell) => (
-          <TableCell
-            key={headCell.id}
-            align="left"
-            sortDirection={orderBy === headCell.id ? order : false}
-          >
-            <TableSortLabel
-              hideSortIcon
-              active={orderBy === headCell.id}
-              direction={orderBy === headCell.id ? order : 'asc'}
-              onClick={createSortHandler(headCell.id)}
-            >
-              {headCell.label}
-              {orderBy === headCell.id ? (
-                <Box sx={{ ...visuallyHidden }}>{order === 'desc' ? 'sorted descending' : 'sorted ascending'}</Box>
-              ) : null}
-            </TableSortLabel>
-          </TableCell>
-        ))}
-      </TableRow>
-    </TableHead>
-  );
+    const handleNewWorkshopAssignment = () => {
+
+    }
+
+    return (
+        <TableRow
+            hover
+            key={id}
+            tabIndex={-1}
+            role="checkbox"
+        >
+            <TableCell component="th" scope="row" padding="none">
+                <Stack direction="row" alignItems="center" spacing={2}>
+                    <Avatar src={photoUrl} />
+                    <Stack direction="column">
+                        <Typography variant="subtitle2" noWrap>
+                            {name}
+                        </Typography>
+                        <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                            {email}
+                        </Typography>
+                    </Stack>
+                </Stack>
+            </TableCell>
+
+            <TableCell align="left">{region}</TableCell>
+
+            <TableCell align="left">{muncipality}</TableCell>
+
+            <TableCell align="right">
+                <div style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                }}>
+                    <WorkshopsSelector workshops={workshops} userWorkshops={userWorkshops} workshopState={user.workshops} emitWorkshopChange={(workshops) => setIsMenuDisabled(workshops.length <= 0)} />
+
+                    <Tooltip title="Workshopauswahl speichern">
+                        <span >
+                            <IconButton color="primary" disabled={isMenuDisabled} onClick={handleNewWorkshopAssignment}>
+                                <Iconify icon="eva:checkmark-circle-outline" />
+                            </IconButton>
+                        </span>
+                    </Tooltip>
+                </div>
+            </TableCell>
+
+            <TableCell align="left">{isVolunteer ? 'Ja' : 'Nein'}</TableCell>
+
+            <TableCell align="right">
+                <UserMoreMenu handleClose={() => handleWorkshopAssignment(userWorkshops, id)} disabled={isMenuDisabled} />
+            </TableCell>
+        </TableRow>
+    );
 }
-
-/*
-    <Stack direction="row" spacing={1}>
-      <Chip label="Chip Filled" />
-      <Chip label="Chip Outlined" variant="outlined" />
-    </Stack>
-*/
