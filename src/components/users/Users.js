@@ -1,14 +1,15 @@
 import {
   Card, Container, Stack, Table, TableBody,
-  TableCell, TableContainer,
-  TablePagination, TableRow, Typography
+  TableCell, TableContainer, Tooltip,
+  TablePagination, TableRow, Typography, IconButton
 } from '@mui/material';
-import * as React from 'react';
 import { useEffect, useState } from 'react';
+import { CSVLink } from "react-csv";
 import { TableHeaderRow, UserRow, UserWorkshopsDialog } from '.';
 import { getCollection } from '../../service/firebase';
 import Page from '../shared/Page';
 import Scrollbar from '../shared/Scrollbar';
+import Iconify from '../shared/Iconify';
 
 const TABLE_HEAD = [
   { id: 'name', label: 'Name', },
@@ -104,6 +105,20 @@ export default function Users() {
 
   const filteredUsers = applySortFilter(users, getComparator(order, orderBy));
 
+  const headers = [
+    { label: "Name", key: "name" },
+    { label: "Email", key: "email" },
+    { label: "Workshop 1", key: "workshop_1" },
+    { label: "Workshop 2", key: "workshop_2" },
+    { label: "Workshop 3", key: "workshop_3" },
+    { label: "Workshop 4", key: "workshop_4" },
+    { label: "Workshop 5", key: "workshop_5" },
+    { label: "Workshop 6", key: "workshop_6" },
+    { label: "Helfer", key: "isVolunteer" },
+  ];
+
+  const data = [];
+
   return (
     <>
       {workshops.length > 0 && <Page title="Teilnehmer">
@@ -112,6 +127,16 @@ export default function Users() {
             <Typography variant="h4" gutterBottom>
               Teilnehmer
             </Typography>
+
+            <CSVLink data={data} headers={headers} filename={"C4MP_Teilnehmer.csv"}>
+              <Tooltip title="Export CSV">
+                <span >
+                  <IconButton>
+                    <Iconify icon="eva:download-outline" width={20} height={20} />
+                  </IconButton>
+                </span>
+              </Tooltip>
+            </CSVLink>
           </Stack>
 
           <Card sx={{ padding: 5 }}>
@@ -127,9 +152,21 @@ export default function Users() {
                   />
                   <TableBody>
                     {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((user) => {
-                      const { id } = user;
+                      const { id, name, email, isVolunteer } = user;
                       const userWorkshops = workshops.filter((workshop) => workshop.attendees.includes(id));
                       userWorkshops.sort((a, b) => user.workshops.indexOf(user.workshops.find(workshop => workshop.id === a.id)) - user.workshops.indexOf(user.workshops.find(workshop => workshop.id === b.id)));
+
+                      data.push({
+                        name,
+                        email,
+                        isVolunteer,
+                        workshop_1: userWorkshops[0]?.name,
+                        workshop_2: userWorkshops[1]?.name,
+                        workshop_3: userWorkshops[2]?.name,
+                        workshop_4: userWorkshops[3]?.name,
+                        workshop_5: userWorkshops[4]?.name,
+                        workshop_6: userWorkshops[5]?.name
+                      });
 
                       return <UserRow key={id} user={user} workshops={workshops} userWorkshops={userWorkshops} handleWorkshopAssignment={handleWorkshopAssignment} />
                     })}

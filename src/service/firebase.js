@@ -1,6 +1,6 @@
 import { initializeApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
-import { collection, deleteDoc, doc, getDocs, getFirestore, setDoc, getDoc, updateDoc, arrayRemove } from "firebase/firestore";
+import { collection, deleteDoc, doc, getDoc, getDocs, getFirestore, setDoc, updateDoc } from "firebase/firestore";
 import { deleteObject, getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
 import { toast } from 'react-toastify';
 import { PLACEHOLDER_IMAGE_URL } from '../utils/constans';
@@ -104,7 +104,7 @@ export const assignWorkshop = async (workshopId, userId) => {
         const userRef = doc(db, "users", userId);
         const user = await (await getDoc(userRef)).data();
 
-        const updatedWorkshop = user.workshops.find((workshop) => workshop.id === workshopId);
+        user.workshops.find((workshop) => workshop.id === workshopId).state = 0;
         //updatedWorkshop.state = state;
 
         await updateDoc(userRef, {
