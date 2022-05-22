@@ -129,6 +129,7 @@ export default function Users() {
                     {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((user) => {
                       const { id } = user;
                       const userWorkshops = workshops.filter((workshop) => workshop.attendees.includes(id));
+                      userWorkshops.sort((a, b) => user.workshops.indexOf(user.workshops.find(workshop => workshop.id === a.id)) - user.workshops.indexOf(user.workshops.find(workshop => workshop.id === b.id)));
 
                       return <UserRow key={id} user={user} workshops={workshops} userWorkshops={userWorkshops} handleWorkshopAssignment={handleWorkshopAssignment} />
                     })}
