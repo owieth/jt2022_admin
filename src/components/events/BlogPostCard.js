@@ -21,27 +21,22 @@ const InfoStyle = styled('div')(({ theme }) => ({
 }));
 
 export default function BlogPostCard({ index, event }) {
-  const { name, date, startTime, endTime, house } = event;
+  const { name, date, startTime, endTime, house, isImmutable } = event;
 
   return (
     <Grid item xs={12} sm={6} md={3}>
-      <Card sx={{ position: 'relative' }}>
+      <Card sx={{ position: 'relative', opacity: isImmutable && 0.5 }}>
         <CardContent>
-          <Typography gutterBottom variant="caption" sx={{ color: 'text.disabled', display: 'block' }}>
-            {/* {fDate()} */}
-          </Typography>
-
           <TitleStyle
-            to={`${index}`}
+            to={!isImmutable ? `${index}` : ''}
             state={event}
             color="inherit"
             variant="subtitle2"
-            underline="hover"
+            underline={!isImmutable ? "hover" : "none"}
             component={RouterLink}
           >
             {name}
           </TitleStyle>
-
 
           <InfoStyle>
             <Box

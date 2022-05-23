@@ -143,7 +143,7 @@ export default function DashboardOverview() {
 
           <Grid item xs={12} md={6} lg={4}>
             <AppOrderTimeline
-              title="Order Timeline"
+              title="Zeitplan"
               list={timeline.map((day, index) => ({
                 id: index,
                 title: day.event,

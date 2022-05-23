@@ -18,6 +18,10 @@ export const houses = [
     {
         key: 4,
         value: 'Turnhalle (E)'
+    },
+    {
+        key: 5,
+        value: 'Campus'
     }
 ]
 

@@ -86,7 +86,9 @@ export default function Form({ initialValues, handleSubmit, handleClose, isEdit 
                     </LocalizationProvider>
 
                     <Grid item xs={4}>
-                        <Select
+                        <TextField
+                            select
+                            fullWidth
                             label="Wo findet das Event statt?"
                             value={formik.values.house}
                             onChange={(value) => {
@@ -98,7 +100,7 @@ export default function Form({ initialValues, handleSubmit, handleClose, isEdit 
                                     {house.value}
                                 </MenuItem>
                             ))}
-                        </Select>
+                        </TextField>
                     </Grid>
                 </Grid>
             </Container>

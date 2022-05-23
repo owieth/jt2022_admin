@@ -108,6 +108,8 @@ export default function Users() {
   const headers = [
     { label: "Name", key: "name" },
     { label: "Email", key: "email" },
+    { label: "Bezirk", key: "region" },
+    { label: "Gemeinde", key: "muncipality" },
     { label: "Workshop 1", key: "workshop_1" },
     { label: "Workshop 2", key: "workshop_2" },
     { label: "Workshop 3", key: "workshop_3" },
@@ -152,20 +154,22 @@ export default function Users() {
                   />
                   <TableBody>
                     {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((user) => {
-                      const { id, name, email, isVolunteer } = user;
+                      const { id, name, email, region, muncipality, isVolunteer } = user;
                       const userWorkshops = workshops.filter((workshop) => workshop.attendees.includes(id));
                       userWorkshops.sort((a, b) => user.workshops.indexOf(user.workshops.find(workshop => workshop.id === a.id)) - user.workshops.indexOf(user.workshops.find(workshop => workshop.id === b.id)));
 
                       data.push({
                         name,
                         email,
-                        isVolunteer,
+                        region,
+                        muncipality,
                         workshop_1: userWorkshops[0]?.name,
                         workshop_2: userWorkshops[1]?.name,
                         workshop_3: userWorkshops[2]?.name,
                         workshop_4: userWorkshops[3]?.name,
                         workshop_5: userWorkshops[4]?.name,
-                        workshop_6: userWorkshops[5]?.name
+                        workshop_6: userWorkshops[5]?.name,
+                        isVolunteer,
                       });
 
                       return <UserRow key={id} user={user} workshops={workshops} userWorkshops={userWorkshops} handleWorkshopAssignment={handleWorkshopAssignment} />

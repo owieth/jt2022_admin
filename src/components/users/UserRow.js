@@ -5,6 +5,8 @@ import React, { useState, useEffect } from 'react';
 import { UserMoreMenu } from '.';
 import Iconify from '../shared/Iconify';
 import WorkshopsSelector from '../shared/WorkshopsSelector';
+import { assignWorkshop } from '../../service/firebase'
+import { toast } from 'react-toastify';
 
 export default function UserRow({ user, workshops, userWorkshops, handleWorkshopAssignment }) {
     const { id, name, email, photoUrl, region, muncipality, isVolunteer } = user;
@@ -15,8 +17,9 @@ export default function UserRow({ user, workshops, userWorkshops, handleWorkshop
         setIsMenuDisabled(userWorkshops.length <= 0)
     }, [userWorkshops])
 
-    const handleNewWorkshopAssignment = () => {
-
+    const handleNewWorkshopAssignment = async () => {
+        await assignWorkshop();
+        toast.success("Workshop wurde dem Teilnehmer hinzugefügt!");
     }
 
     return (

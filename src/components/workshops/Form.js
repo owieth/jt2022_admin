@@ -10,6 +10,7 @@ import { startOfDay } from 'date-fns';
 import deLocale from 'date-fns/locale/de';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
+import { houses } from '../constants/house'
 
 export default function Form({ initialValues, handleSubmit, handleClose, isEdit = false }) {
     const formik = useFormik({
@@ -25,29 +26,6 @@ export default function Form({ initialValues, handleSubmit, handleClose, isEdit 
         onSubmit: (values) =>
             handleSubmit(values)
     });
-
-    const houses = [
-        {
-            key: 0,
-            value: 'Verwaltungsgebäude (A)'
-        },
-        {
-            key: 1,
-            value: 'Schulungsgebäude (B)'
-        },
-        {
-            key: 2,
-            value: 'Unterkunft (C)'
-        },
-        {
-            key: 3,
-            value: 'Unterkunft (D)'
-        },
-        {
-            key: 4,
-            value: 'Turnhalle (E)'
-        }
-    ]
 
     return (
         <form onSubmit={formik.handleSubmit}>
