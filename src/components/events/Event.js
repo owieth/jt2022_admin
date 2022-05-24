@@ -4,21 +4,38 @@ import {
   Card,
   Container, Dialog,
   DialogActions,
-  DialogContent, DialogTitle, Stack
+  DialogContent, DialogTitle, IconButton,
+  ImageListItem,
+  ImageListItemBar, Stack
 } from '@mui/material';
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { deleteEvent, updateEvent } from 'src/service/firebase';
 import { Form } from '.';
+import { handleImageUpload } from '../../service/firebase';
+import Iconify from '../shared/Iconify';
 import Page from '../shared/Page';
 
 export default function Event() {
+  const [image, setImage] = useState('');
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
 
   const event = location.state;
+  const fileRef = useRef();
+
+  useEffect(() => {
+    setImage(event.image);
+  }, [event])
+
+  const handleUpload = async (e) => {
+    if (e.target.files[0]) {
+      const imageUrl = await handleImageUpload(e.target.files[0], `events/${event.id}`);
+      setImage(imageUrl);
+    }
+  }
 
   const handleDelete = async () => {
     await deleteEvent(event.id);
@@ -38,7 +55,7 @@ export default function Event() {
     if (values.startTime >= values.endTime) {
       toast.error("Endzeit kann nicht hinter Startzeit sein!");
     } else {
-      await updateEvent(event.id, values);
+      await updateEvent(image, event.id, values);
       toast.success("Event wurde geupdated!");
       navigate('/dashboard/events', { replace: true });
     }
@@ -49,6 +66,34 @@ export default function Event() {
       {event && <Page title="Workshop">
         <Container>
           <Card>
+            <ImageListItem style={{
+              width: '100%',
+            }}>
+              <img alt={''} src={image} style={{
+                height: '200px',
+              }}></img>
+
+              <ImageListItemBar
+                sx={{
+                  background: 'none',
+                }}
+                position="top"
+                actionIcon={
+                  <>
+                    <IconButton
+                      sx={{ color: 'white', padding: 2 }}
+                      onClick={() => fileRef.current.click()}
+                    >
+                      <Iconify icon="eva:edit-2-outline" />
+                    </IconButton>
+                    <input ref={fileRef}
+                      type="file" accept=".png, .jpg, .jpeg" hidden onChange={handleUpload} />
+                  </>
+                }
+                actionPosition="right"
+              />
+            </ImageListItem>
+
             <Stack
               direction="row"
               justifyContent="center"

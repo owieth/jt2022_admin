@@ -59,6 +59,7 @@ export const createEvent = async (event) => {
             startTime: event.startTime,
             endTime: event.endTime,
             house: event.house,
+            image: PLACEHOLDER_IMAGE_URL,
         });
     } catch (err) {
         toast.error(err);
@@ -83,7 +84,7 @@ export const updateWorkshop = async (image, workshopId, workshop) => {
     }
 };
 
-export const updateEvent = async (eventId, event) => {
+export const updateEvent = async (image, eventId, event) => {
     try {
         const eventRef = doc(db, "events", eventId);
 
@@ -93,6 +94,7 @@ export const updateEvent = async (eventId, event) => {
             startTime: event.startTime,
             endTime: event.endTime,
             house: event.house,
+            image: image
         });
     } catch (err) {
         toast.error(err);
@@ -169,11 +171,11 @@ export const deleteWorkshopImage = async (workshopId) => {
     }
 };
 
-export const handleImageUpload = async (uploadedFile, workshopId) => {
+export const handleImageUpload = async (uploadedFile, path) => {
     if (!uploadedFile) return;
 
     const firestore = getStorage();
-    const storageRef = ref(firestore, `workshops/${workshopId}`);
+    const storageRef = ref(firestore, path);
 
     try {
         await uploadBytes(storageRef, uploadedFile);

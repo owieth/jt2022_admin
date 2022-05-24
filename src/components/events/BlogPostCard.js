@@ -5,6 +5,11 @@ import Iconify from '../shared/Iconify';
 import { format } from 'date-fns';
 import { getHouseByKey } from '../constants/house';
 
+const CardMediaStyle = styled('div')({
+  position: 'relative',
+  paddingTop: 'calc(100% * 3 / 4)',
+});
+
 const TitleStyle = styled(Link)({
   height: 44,
   overflow: 'hidden',
@@ -20,12 +25,24 @@ const InfoStyle = styled('div')(({ theme }) => ({
   color: theme.palette.text.disabled,
 }));
 
+const CoverImgStyle = styled('img')({
+  top: 0,
+  width: '100%',
+  height: '100%',
+  objectFit: 'cover',
+  position: 'absolute',
+});
+
 export default function BlogPostCard({ index, event }) {
-  const { name, date, startTime, endTime, house, isImmutable } = event;
+  const { name, date, startTime, endTime, house, isImmutable, image } = event;
 
   return (
     <Grid item xs={12} sm={6} md={3}>
       <Card sx={{ position: 'relative', opacity: isImmutable && 0.5 }}>
+        <CardMediaStyle>
+          <CoverImgStyle src={image} />
+        </CardMediaStyle>
+
         <CardContent>
           <TitleStyle
             to={!isImmutable ? `${index}` : ''}

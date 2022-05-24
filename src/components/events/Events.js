@@ -2,6 +2,7 @@ import { Button, Container, Grid, Stack, Typography } from '@mui/material';
 import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
+import DialogContentText from '@mui/material/DialogContentText';
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { BlogPostCard, Form } from '.';
@@ -72,6 +73,10 @@ export default function Events() {
         >
           <DialogTitle>Neuer Eintrag erstellen</DialogTitle>
           <DialogContent>
+            <DialogContentText>
+              Das Bild kann beim Bearbeiten ausgewählt werden. Das Event wird mit einem Platzhalterbild erstellt.
+            </DialogContentText>
+
             <Form initialValues={{
               name: '',
               date: new Date(),

@@ -34,7 +34,7 @@ export default function Workshop() {
 
   const handleUpload = async (e) => {
     if (e.target.files[0]) {
-      const imageUrl = await handleImageUpload(e.target.files[0], workshop.id);
+      const imageUrl = await handleImageUpload(e.target.files[0], `workshops/${workshop.id}`);
       setImage(imageUrl);
     }
   }
