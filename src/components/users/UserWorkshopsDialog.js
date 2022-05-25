@@ -42,7 +42,9 @@ export default function UserWorkshopsDialog({ userId, workshops, open, handleClo
     };
 
     const handleAssignment = async (state) => {
-        selected.forEach(async (workshop) => await updateWorkshopAttendance(workshop, userId, state));
+        for (const workshop of selected) {
+            await updateWorkshopAttendance(workshop, userId, state);
+        }
         handleClose();
     }
 

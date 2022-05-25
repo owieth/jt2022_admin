@@ -66,18 +66,23 @@ export default function Users() {
   const [workshopsToAssign, setWorkshopsToAssign] = useState([]);
 
   useEffect(() => {
-    const fetchUsers = async () => {
+    let mounted = true;
+
+    (async () => {
       const users = await getCollection("users");
-      setUsers(users);
-    }
+      if (mounted) {
+        setUsers(users);
+      }
+    })();
 
-    const fetchWorkshops = async () => {
+    (async () => {
       const workshops = await getCollection("workshops");
-      setWorkshops(workshops);
-    }
+      if (mounted) {
+        setWorkshops(workshops);
+      }
+    })();
 
-    fetchUsers();
-    fetchWorkshops();
+    return () => mounted = false;
   }, [])
 
   const handleRequestSort = (event, property) => {

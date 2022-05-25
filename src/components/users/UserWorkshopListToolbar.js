@@ -20,6 +20,13 @@ export default function UserWorkshopListToolbar({ numSelected, handleAssignment 
                 {numSelected} Workshops ausgewählt
             </Typography>
             <div>
+                <Tooltip title="Ausgewählte Workshops zurücksetzen">
+                    <span >
+                        <IconButton color="primary" disabled={numSelected === 0} onClick={() => handleAssignment(0)}>
+                            <Iconify icon="eva:sync-outline" />
+                        </IconButton>
+                    </span>
+                </Tooltip>
                 <Tooltip title="Ausgewählte Workshops ablehnen">
                     <span >
                         <IconButton color="primary" disabled={numSelected === 0} onClick={() => handleAssignment(2)}>

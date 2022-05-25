@@ -5,20 +5,21 @@ import React, { useState, useEffect } from 'react';
 import { UserMoreMenu } from '.';
 import Iconify from '../shared/Iconify';
 import WorkshopsSelector from '../shared/WorkshopsSelector';
-import { assignWorkshop } from '../../service/firebase'
+import { assignWorkshops } from '../../service/firebase'
 import { toast } from 'react-toastify';
 
 export default function UserRow({ user, workshops, userWorkshops, handleWorkshopAssignment }) {
     const { id, name, email, photoUrl, region, muncipality, isVolunteer } = user;
 
     const [isMenuDisabled, setIsMenuDisabled] = useState(true)
+    const [newWorkshops, setNewWorkshops] = useState([])
 
     useEffect(() => {
         setIsMenuDisabled(userWorkshops.length <= 0)
     }, [userWorkshops])
 
     const handleNewWorkshopAssignment = async () => {
-        await assignWorkshop();
+        await assignWorkshops(newWorkshops, id);
         toast.success("Workshop wurde dem Teilnehmer hinzugefügt!");
     }
 
@@ -52,7 +53,10 @@ export default function UserRow({ user, workshops, userWorkshops, handleWorkshop
                     display: 'flex',
                     alignItems: 'center',
                 }}>
-                    <WorkshopsSelector workshops={workshops} userWorkshops={userWorkshops} workshopState={user.workshops} emitWorkshopChange={(workshops) => setIsMenuDisabled(workshops.length <= 0)} />
+                    <WorkshopsSelector workshops={workshops} userWorkshops={userWorkshops} workshopState={user.workshops} emitWorkshopChange={(workshops) => {
+                        setIsMenuDisabled(workshops.length <= 0)
+                        setNewWorkshops(workshops)
+                    }} />
 
                     <Tooltip title="Workshopauswahl speichern">
                         <span >

@@ -1,6 +1,6 @@
 import { initializeApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
-import { collection, deleteDoc, doc, getDoc, getDocs, getFirestore, setDoc, updateDoc, arrayUnion } from "firebase/firestore";
+import { arrayUnion, collection, deleteDoc, doc, getDoc, getDocs, getFirestore, setDoc, updateDoc } from "firebase/firestore";
 import { deleteObject, getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
 import { toast } from 'react-toastify';
 import { PLACEHOLDER_IMAGE_URL } from '../utils/constans';
@@ -101,21 +101,26 @@ export const updateEvent = async (image, eventId, event) => {
     }
 };
 
-export const assignWorkshop = async (workshopId, userId) => {
+export const assignWorkshops = async (workshops, userId) => {
     try {
         const userRef = doc(db, "users", userId);
         const user = await (await getDoc(userRef)).data();
+        const usersWorkshops = user.workshops.map(workshop => workshop.id);
+        const filteredWorkshops = workshops.filter((workshop) => !usersWorkshops.includes(workshop.id));
 
-        const workshopRef = doc(db, "workshops", workshopId);
+        filteredWorkshops.forEach(async (workshop) => {
 
-        user.workshops.find((workshop) => workshop.id === workshopId).state = 0;
+            const workshopRef = doc(db, "workshops", workshop.id);
 
-        await updateDoc(workshopRef, {
-            attendees: arrayUnion(userId)
-        });
+            await updateDoc(workshopRef, {
+                attendees: arrayUnion(userId)
+            });
 
-        await updateDoc(userRef, {
-            workshops: user.workshops
+            user.workshops.push({ id: workshop.id, state: 0 });
+
+            await updateDoc(userRef, {
+                workshops: user.workshops
+            });
         });
     } catch (err) {
         toast.error(err);
