@@ -1,6 +1,6 @@
 import { initializeApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
-import { arrayUnion, collection, deleteDoc, doc, getDoc, getDocs, getFirestore, setDoc, updateDoc } from "firebase/firestore";
+import { arrayRemove, arrayUnion, collection, deleteDoc, doc, getDoc, getDocs, getFirestore, setDoc, updateDoc } from "firebase/firestore";
 import { deleteObject, getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
 import { toast } from 'react-toastify';
 import { PLACEHOLDER_IMAGE_URL } from '../utils/constans';
@@ -108,20 +108,37 @@ export const assignWorkshops = async (workshops, userId) => {
         const usersWorkshops = user.workshops.map(workshop => workshop.id);
         const filteredWorkshops = workshops.filter((workshop) => !usersWorkshops.includes(workshop.id));
 
-        filteredWorkshops.forEach(async (workshop) => {
+        // Workshop has been deselected
+        if (user.workshops.length > workshops.length) {
+            usersWorkshops.filter(workshop => !workshops.map(workshop => workshop.id).includes(workshop)).forEach(async (workshop) => {
+                const workshopRef = doc(db, "workshops", workshop);
 
-            const workshopRef = doc(db, "workshops", workshop.id);
+                await updateDoc(workshopRef, {
+                    attendees: arrayRemove(userId)
+                });
 
-            await updateDoc(workshopRef, {
-                attendees: arrayUnion(userId)
+                const workshopToRemove = user.workshops.map(w => w.id).find(w => w === workshop);
+
+                await updateDoc(userRef, {
+                    workshops: user.workshops.filter(work => work.id !== workshopToRemove)
+                });
             });
+        } else {
+            filteredWorkshops.forEach(async (workshop) => {
 
-            user.workshops.push({ id: workshop.id, state: 0 });
+                const workshopRef = doc(db, "workshops", workshop.id);
 
-            await updateDoc(userRef, {
-                workshops: user.workshops
+                await updateDoc(workshopRef, {
+                    attendees: arrayUnion(userId)
+                });
+
+                user.workshops.push({ id: workshop.id, state: 0 });
+
+                await updateDoc(userRef, {
+                    workshops: user.workshops
+                });
             });
-        });
+        }
     } catch (err) {
         toast.error(err);
     }
