@@ -24,21 +24,50 @@ export default function DashboardOverview() {
     fetchData();
   }, [])
 
-  //console.log(users.map(user => user.workshops.at(workshops.find(workshop => workshop.attendees.includes(user.id))?.id)?.state));
+  const getStateOfWorkshopCount = () => {
+    const temp = [];
+    const workshopState = [];
 
-  const getCount = (increment) => {
-    const data = [];
-    workshops.forEach(workshop => {
-      data.push(workshop.attendees.length);
-      const filteredUsers = users.filter((user) => user.workshops.map(workshop => workshop.id).includes(workshop.id));
+    users.forEach(user => {
+      user.workshops.map(workshop => {
+        return temp.push({
+          name: workshops.find(w => w.id === workshop.id)?.name,
+          state: workshop.state,
+        })
+      })
+    })
 
-      if (filteredUsers.length > 0) {
-        filteredUsers.forEach((user, index) => {
-          data[data.indexOf(workshop)] = user.workshops[index].state;
+    temp.forEach(workshop => {
+      const workshops = temp.filter(w => w.name === workshop.name);
+
+      if (!workshopState.map(workshop => workshop.name).includes(workshop.name)) {
+        return workshopState.push({
+          name: workshop.name,
+          wait: workshops.filter(workshop => workshop.state === 0).length,
+          approved: workshops.filter(workshop => workshop.state === 1).length,
+          refused: workshops.filter(workshop => workshop.state === 2).length,
         })
       }
-    });
-    return data;
+    })
+
+    return workshopState;
+  }
+
+  const getRegions = () => {
+    const regions = [];
+
+    users.forEach(user => {
+      if (!regions.map((region) => region.label).includes(user.region)) {
+        regions.push({
+          label: user.region,
+          value: users.filter((u) => u.region === user.region).length
+        })
+      }
+    })
+
+    const nonSelected = regions.find(region => region.label === '');
+    if (nonSelected) regions[regions.indexOf(nonSelected)].label = 'Keine Angabe'
+    return regions;
   }
 
   return (
@@ -70,19 +99,19 @@ export default function DashboardOverview() {
                   name: 'In Bearbeitung',
                   type: 'column',
                   fill: 'solid',
-                  data: Array.from(Array(10).keys())
+                  data: getStateOfWorkshopCount().map(workshops => workshops.wait)
                 },
                 {
                   name: 'Bestätigt',
                   type: 'area',
                   fill: 'gradient',
-                  data: [44, 55, 41, 67, 22, 43, 21, 41, 56, 27, 43],
+                  data: getStateOfWorkshopCount().map(workshops => workshops.approved)
                 },
                 {
                   name: 'Abgelehnt',
                   type: 'line',
                   fill: 'solid',
-                  data: [30, 25, 36, 30, 45, 35, 64, 52, 59, 36, 39],
+                  data: getStateOfWorkshopCount().map(workshops => workshops.refused)
                 },
               ]}
             />
@@ -91,12 +120,7 @@ export default function DashboardOverview() {
           <Grid item xs={12} md={6} lg={4}>
             <RegionsChart
               title="Aufteilung Bezirke"
-              chartData={users.map((user) => {
-                return {
-                  label: user.region,
-                  value: users.filter((u) => u.region === user.region).length
-                }
-              })}
+              chartData={getRegions()}
               chartColors={[
                 theme.palette.primary.main,
                 theme.palette.chart.blue[0],
