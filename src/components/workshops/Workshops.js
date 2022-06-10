@@ -80,9 +80,9 @@ export default function Workshops() {
             <Form initialValues={{
               name: '',
               description: '',
-              date: new Date(),
-              startTime: new Date(),
-              endTime: new Date(),
+              date: new Date(new Date().setHours(0, 0, 0, 0)).getTime(),
+              startTime: new Date().getTime(),
+              endTime: new Date().getTime(),
               house: 0
             }} handleClose={handleClose} handleSubmit={handleSubmit} />
 

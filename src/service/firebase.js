@@ -108,6 +108,8 @@ export const assignWorkshops = async (workshops, userId) => {
         const usersWorkshops = user.workshops.map(workshop => workshop.id);
         const filteredWorkshops = workshops.filter((workshop) => !usersWorkshops.includes(workshop.id));
 
+        if (workshops.length === 0) return;
+
         // Workshop has been deselected
         if (user.workshops.length > workshops.length) {
             usersWorkshops.filter(workshop => !workshops.map(workshop => workshop.id).includes(workshop)).forEach(async (workshop) => {

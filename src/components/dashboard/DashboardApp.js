@@ -93,7 +93,7 @@ export default function DashboardOverview() {
           <Grid item xs={12} md={6} lg={8}>
             <AppWebsiteVisits
               title="Anmeldungen pro Workshop"
-              chartLabels={workshops.map(workshop => workshop.name)}
+              chartLabels={getStateOfWorkshopCount().map(workshop => workshop.name)}
               chartData={[
                 {
                   name: 'In Bearbeitung',
