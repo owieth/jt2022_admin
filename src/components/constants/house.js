@@ -22,6 +22,10 @@ export const houses = [
     {
         key: 5,
         value: 'Campus'
+    },
+    {
+        key: 6,
+        value: 'Forum Fribourg'
     }
 ]
 
